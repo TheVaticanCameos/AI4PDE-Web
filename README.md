@@ -13,10 +13,10 @@ GitHub网页：https://github.com/TheVaticanCameos/AI4PDE-Web
 基本使用方法：用户在 Web 端选择需要求解的方程，输入相关参数，后端代码将执行求解过程，将求解结果反馈在 Web 端。
 
 目前可求解的方程有：
-- 带 Dirichlet 两点边值的一维 Poisson 方程\[\begin{aligned}
-    &u''(x)=f(x), \quad x\in\left[0, 1\right]\\
-    &u(0)=u(1)=0
-\end{aligned}\]其中右端项（源项） $f(x)$ 是多项式，由用户通过指定各项系数的方式输入；$u(x)$是待求解的函数。
+- 带 Dirichlet 两点边值的一维 Poisson 方程 \[\begin{aligned}
+    & u''(x)=f(x), \quad x\in\left[0, 1\right]\\
+    & u(0)=u(1)=0
+\end{aligned}\] 其中右端项（源项） $f(x)$ 是多项式，由用户通过指定各项系数的方式输入； $u(x)$ 是待求解的函数。
 - ......
 
 ### 1.2 技术原理
