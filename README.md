@@ -43,9 +43,12 @@ root/
 |       |--...
 |   |--source/                  // 用于求解的 python 代码
 |       |--infer.py             // 使用模型参数，用于一维 Poisson 方程的求解
+|       |--train.py             // 训练模型参数
 |       |--...
 |--front-end/                   // 前端文件
 |   |--pde-solver.html          // Web 前端
+|   |--PDE-solver2.0.html       // ver2.0 Web 前端
+|   |--server.py                // 连接到服务器
 |   |--...
 ```
 
