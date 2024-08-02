@@ -1,0 +1,377 @@
+<!DOCTYPE html>  
+<html lang="zh">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>PDE求解器</title>  
+    <style>  
+        body {  
+            margin: 0;  
+            padding: 20px;  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: flex-start;  
+            font-family: Arial, sans-serif;  
+            background-color: #f0f4f8;  
+            transition: background-color 0.3s, color 0.3s;  
+        }  
+        body.dark-mode {  
+            background-color: #333;  
+            color: #ffffff;  
+        }  
+        .slider-container {  
+            flex: 1;  
+            margin-right: 20px;  
+            padding: 20px;  
+            background-color: #ffffff;  
+            border: 1px solid #ddd;  
+            border-radius: 8px;  
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
+            transition: background-color 0.3s, border-color 0.3s;  
+        }  
+        .slider-container.dark-mode {  
+            background-color: #444;  
+            border-color: #555;  
+        }  
+        .image-container {  
+            flex: 1;  
+            text-align: center;  
+            padding: 20px;  
+            background-color: #ffffff;  
+            border: 1px solid #ddd;  
+            border-radius: 8px;  
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  
+            transition: background-color 0.3s, border-color 0.3s;  
+        }  
+        .image-container.dark-mode {  
+            background-color: #000000;  
+            border-color: #555;  
+        }  
+        h1.light-mode {  
+            color: #0000007d;  
+            font-size: 24px;  
+        }  
+        h1.dark-mode {  
+            color: #ffffff;  
+            font-size: 24px;  
+        }  
+        h2.light-mode {  
+            color: #666;  
+            font-size: 1.2em;  
+            margin-top: 5px;  
+        }  
+        h2.dark-mode {  
+            color: #cac4c4;  
+            font-size: 1.2em;  
+            margin-top: 5px;  
+        }  
+        h3.light-mode {  
+            color: #4e4c4c;  
+            margin: 15px 0;  
+        }  
+        h3.dark-mode {  
+            color: #b8b3b3c4;  
+            margin: 15px 0;  
+        }  
+        .output {  
+            margin-top: 10px;  
+            font-size: 1.2em;  
+            font-weight: bold;  
+        }  
+        .output.light-mode {  
+            color: #000000; /* 浅色模式下的颜色 */  
+        }  
+        .output.dark-mode {  
+            color: #ffffff; /* 深色模式下的颜色 */  
+        }  
+        input[type="range"] {  
+            width: 80%;  
+            margin: 20px 0;  
+        }  
+        input[type="number"] {  
+            width: 70px;  
+            text-align: center;  
+            margin: 0 5px;  
+        }  
+        button {  
+            padding: 10px 20px;  
+            font-size: 16px;  
+            color: #ffffff;  
+            background-color: #007BFF; /* 默认为蓝色 */  
+            border: none;  
+            border-radius: 5px;  
+            cursor: pointer;  
+            transition: background-color 0.3s;  
+        }  
+        button:hover {  
+            background-color: #ccc;  
+        }  
+        button:hover.dark-mode {  
+            background-color: #ccc;  
+        }  
+        #themeToggle {  
+            position: absolute;  
+            top: 20px;  
+            right: 20px;  
+            width: 40px;  
+            height: 40px;  
+            border: none;  
+            border-radius: 50%;  
+            background-color: #007BFF;  
+            color: #ffffff;  
+            font-size: 20px;  
+            cursor: pointer;  
+            display: flex;  
+            justify-content: center;  
+            align-items: center;  
+            transition: background-color 0.3s;  
+        }  
+        .dark-mode #themeToggle {  
+            background-color: #b8b7b7; /* 浅灰色 */  
+        }  
+        /* 浅色模式下按钮样式 */  
+        button.light-mode {  
+            background-color: #007BFF; /* 蓝色 */  
+            color: #ffffff; /* 白色字体 */  
+        }  
+        /* 深色模式下按钮样式 */  
+        button.dark-mode {  
+            background-color: #4d59b3de; /* 灰蓝色 */  
+            color: #ffffff; /* 白色字体 */  
+        }  
+        /* 其他容器样式 */  
+        .slider-container, .image-container {  
+            margin: 10px;  
+            padding: 10px;  
+            border: 1px solid #ccc;  
+            border-radius: 5px;  
+            background-color: #ffffff;  
+            transition: background-color 0.3s;  
+        }  
+        /* 深色模式容器样式 */  
+        .slider-container.dark-mode, .image-container.dark-mode {  
+            background-color: #0000007d;  
+            border-color: #f9f8f889;  
+            color: #ffffff;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <div class="slider-container">  
+        <h1>PDE求解器</h1>  
+        <h2>目前只能解Poisson方程（u"(x)=f(x)）。</h2>  
+        <h3 id="sliderValues">当前f(x): </h3>  
+
+        <div>  
+            <button onclick="addSlider()">增加x的幂数</button>  
+            <button id="themeToggle" onclick="toggleTheme()">  
+                <span id="themeIcon">🌙</span>  
+            </button>  
+        </div>  
+
+        <div id="sliders"></div>  
+        <button onclick="sendData()">发送数据</button>
+    </div>  
+
+    <div class="image-container">  
+        <canvas id="solutionCanvas" width="300" height="300"></canvas>
+        <p>u(x)</p>  
+    </div>  
+
+    <script>  
+        let sliderCount = -1;  
+
+        function toggleTheme() {  
+            document.body.classList.toggle('dark-mode');  
+            document.querySelectorAll('.slider-container, .image-container').forEach(container => {  
+                container.classList.toggle('dark-mode');  
+            });  
+
+            const sliderValue = document.getElementById('themeIcon');  
+            sliderValue.innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';  
+
+            if (document.body.classList.contains('dark-mode')) {  
+                sliderValue.classList.add('dark-mode');  
+                sliderValue.classList.remove('light-mode');  
+            } else {  
+                sliderValue.classList.add('light-mode');  
+                sliderValue.classList.remove('dark-mode');  
+            }  
+
+            const button = document.getElementById('themeToggle');  
+            // 切换按钮样式  
+            if (document.body.classList.contains('dark-mode')) {  
+                button.classList.add('dark-mode');  
+                button.classList.remove('light-mode');  
+            } else {  
+                button.classList.add('light-mode');  
+                button.classList.remove('dark-mode');  
+            }  
+
+            // 切换其他按钮的样式  
+            document.querySelectorAll('button').forEach(btn => {  
+                if (document.body.classList.contains('dark-mode')) {  
+                    btn.classList.add('dark-mode');  
+                    btn.classList.remove('light-mode');  
+                } else {  
+                    btn.classList.add('light-mode');  
+                    btn.classList.remove('dark-mode');  
+                }  
+            });  
+
+            // 切换滑块值文本的样式  
+            document.querySelectorAll('.output').forEach(output => {  
+                if (document.body.classList.contains('dark-mode')) {  
+                    output.classList.add('dark-mode');  
+                    output.classList.remove('light-mode');  
+                } else {  
+                    output.classList.add('light-mode');  
+                    output.classList.remove('dark-mode');  
+                }  
+            });  
+        }  
+
+        // 初始化  
+        addSlider();  
+
+        function addSlider() {  
+            sliderCount++;  
+
+            // 创建一个新的滑块  
+            var sliderContainer = document.createElement('div');  
+            sliderContainer.className = 'slider-container';  
+
+            // 根据当前页面主题选择容器样式  
+            if (document.body.classList.contains('dark-mode')) {  
+                sliderContainer.classList.add('dark-mode');  
+            } else {  
+                sliderContainer.classList.add('light-mode');  
+            }  
+
+            var titleLabel = document.createElement('label');  
+            titleLabel.innerText = 'x^' + sliderCount;  
+
+            // 创建输入框  
+            var minInput = document.createElement('input');  
+            minInput.type = 'number';  
+            minInput.placeholder = '最小值';  
+            minInput.value = 1;  
+
+            var maxInput = document.createElement('input');  
+            maxInput.type = 'number';  
+            maxInput.placeholder = '最大值';  
+            maxInput.value = 100;  
+
+            // 创建滑块  
+            var rangeInput = document.createElement('input');  
+            rangeInput.type = 'range';  
+            rangeInput.oninput = function() {  
+                sliderValue.innerText = rangeInput.value;  
+                updateSliderValuesDisplay();  
+            };  
+
+            // 创建输出值文本  
+            var sliderValue = document.createElement('span');  
+            sliderValue.className = 'output';  
+            sliderValue.innerText = rangeInput.value;  
+
+            // 根据当前页面主题选择输出值文本颜色  
+            if (document.body.classList.contains('dark-mode')) {  
+                sliderValue.classList.add('dark-mode');  
+            } else {  
+                sliderValue.classList.add('light-mode');  
+            }  
+
+            // 添加元素  
+            sliderContainer.appendChild(titleLabel);  
+            sliderContainer.appendChild(minInput);  
+            sliderContainer.appendChild(maxInput);  
+            sliderContainer.appendChild(rangeInput);  
+            sliderContainer.appendChild(sliderValue);  
+
+            // 滑块更新   
+            function updateRange() {  
+                var minValue = parseInt(minInput.value);  
+                var maxValue = parseInt(maxInput.value);  
+
+                if (minValue > maxValue) {  
+                    alert("最小值必须小于等于最大值！");  
+                    return;  
+                }  
+
+                rangeInput.min = minValue;  
+                rangeInput.max = maxValue;  
+                rangeInput.value = Math.max(minValue, Math.min(maxValue, rangeInput.value));  
+                sliderValue.innerText = rangeInput.value; // 更新输出值  
+                updateSliderValuesDisplay(); // 更新<h3>的值  
+            }  
+
+            function updateSliderValuesDisplay() {  
+                const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {  
+                    const power = index; // 当前滑块的幂数  
+                    return `${span.innerText}x^${power}`; // 按多项式形式构造字符串  
+                });  
+
+                // 将多项式值显示在 <h3> 中  
+                document.getElementById('sliderValues').innerText = '当前f(x): ' + sliderValues.join(' + ');  
+            }  
+
+            // 添加输入框事件处理  
+            minInput.addEventListener('input', updateRange);  
+            maxInput.addEventListener('input', updateRange);  
+            rangeInput.addEventListener('input', function() {  
+                sliderValue.innerText = rangeInput.value; // 更新输出值  
+                updateSliderValuesDisplay(); // 更新<h3>的值  
+            });  
+
+            // 将新的滑块容器添加到页面  
+            document.getElementById('sliders').appendChild(sliderContainer);  
+
+            updateRange();  
+        }  
+
+
+        function sendData() {  
+            const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {  
+                return {power: index, value: parseFloat(span.innerText)};  
+            });  
+
+            fetch('/solve', {  
+                method: 'POST',  
+                headers: {  
+                    'Content-Type': 'application/json',  
+                },  
+                body: JSON.stringify(sliderValues),  
+            })  
+            .then(response => response.json())  
+            .then(data => {  
+                drawSolution(data);  
+            })  
+            .catch((error) => {  
+                console.error('Error:', error);  
+            });  
+        }  
+
+        function drawSolution(data) {  
+            const canvas = document.getElementById('solutionCanvas');  
+            const ctx = canvas.getContext('2d');  
+            ctx.clearRect(0, 0, canvas.width, canvas.height);  
+
+            // 解析并绘制返回的结果  
+            const xValues = data.x;
+            const yValues = data.y;
+
+            ctx.beginPath();  
+            ctx.moveTo(xValues[0], canvas.height - yValues[0]);  
+
+            for (let i = 1; i < xValues.length; i++) {  
+                ctx.lineTo(xValues[i], canvas.height - yValues[i]);  
+            }  
+
+            ctx.strokeStyle = '#007BFF';  
+            ctx.lineWidth = 2;  
+            ctx.stroke();  
+        }  
+    </script>  
+</body>  
+</html>
