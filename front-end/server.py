@@ -85,5 +85,9 @@ def solve():
     poisson1d_solver(poly)
     return send_file('../output/poisson1d-test.png', mimetype='image/png')
 
+@app.route('/')
+def main_page():
+    return send_file('PDE-solver2.0.html', mimetype='text/html')
+
 if __name__ == '__main__':
     app.run(debug=True)
