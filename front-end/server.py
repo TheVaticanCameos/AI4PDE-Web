@@ -22,7 +22,9 @@ class Model(nn.Module):
 
 # 加载模型
 model = Model()
-model.load_state_dict(torch.load("C:/Users/李颖/Desktop/USTC/大一下/afterschool/余庆杯/git/AI4PDE-Web/back-end/params/params.ckpt-1000.pt", map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("base_dir = os.path.dirname(os.path.abspath(__file__))
+
+model_path = os.path.join('../back-end/params/params.ckpt-1000.pt', map_location=torch.device('cpu')))
 model.eval()
 
 #接收前端发送的多项式系数数据，使用神经网络模型求解 PDE，并生成解的曲线图保存为 output.png 文件，然后将计算结果返回给前端
