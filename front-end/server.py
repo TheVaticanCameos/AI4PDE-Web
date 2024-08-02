@@ -1,62 +1,89 @@
-from flask import Flask, request, jsonify，send_file
-import torch
-import torch.nn as nn
-import numpy as np
+from flask import Flask, request, jsonify, send_file
+import deepxde as dde
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 
 app = Flask(__name__)
 
+def poisson1d_solver(poly: dict) -> None:
+    # Poisson equation: -u_xx = f
+    def equation(x, y, f):
+        dy_xx = dde.grad.hessian(y, x)
+        return -dy_xx - f
 
-class Model(nn.Module):
-    def __init__(self):
-        super(Model, self).__init__()
-        # 定义模型层次
-        self.layer1 = nn.Linear(1, 10)
-        self.layer2 = nn.Linear(10, 1)
+    # Domain is interval [0, 1]
+    geom = dde.geometry.Interval(0, 1)
 
-    def forward(self, x):
-        x = torch.relu(self.layer1(x))
-        x = self.layer2(x)
-        return x
+    # Zero Dirichlet BC
+    def u_boundary(_):
+        return 0
 
-# 加载模型
-model = Model()
-base_dir = os.path.dirname(__file__)
+    def boundary(_, on_boundary):
+        return on_boundary
 
-model_path = os.path.join(base_dir,'..','back-end', 'params', 'params.ckpt-1000.pt'，map_location=torch.device('cpu'))
+    bc = dde.icbc.DirichletBC(geom, u_boundary, boundary)
 
-model.eval()
+    # Define PDE
+    pde = dde.data.PDE(geom, equation, bc, num_domain=100, num_boundary=2)
 
-#接收前端发送的多项式系数数据，使用神经网络模型求解 PDE，并生成解的曲线图保存为 output.png 文件，然后将计算结果返回给前端
+    # Function space for f(x) are polynomials
+    degree = 3
+    space = dde.data.PowerSeries(N=degree + 1)
+
+    # Choose evaluation points
+    num_eval_points = 10
+    evaluation_points = geom.uniform_points(num_eval_points, boundary=True)
+
+    # Define PDE operator
+    pde_op = dde.data.PDEOperatorCartesianProd(
+        pde,
+        space,
+        evaluation_points,
+        num_function=100,
+    )
+
+    # Setup DeepONet
+    dim_x = 1
+    p = 32
+    net = dde.nn.DeepONetCartesianProd(
+        [num_eval_points, 32, p],
+        [dim_x, 32, p],
+        activation="tanh",
+        kernel_initializer="Glorot normal",
+    )
+
+    # Define and train model
+    model = dde.Model(pde_op, net)
+    dde.optimizers.set_LBFGS_options(maxiter=1000)
+    model.compile("L-BFGS")
+    model.restore("../params/params.ckpt-1000.pt", device='cpu')
+
+    max_deg = max(poly.keys())
+    features = np.zeros(shape=(1, max_deg+1), dtype=np.float32)
+    for key, value in poly.items():
+        features[0][key] = value
+
+    fx = space.eval_batch(features, evaluation_points)
+    x = geom.uniform_points(100, boundary=True)
+    y = model.predict((fx, x))
+
+    fig = plt.figure(figsize=(4, 8))
+    z = np.zeros_like(x)
+    plt.plot(x, z, 'k-', alpha=0.1)
+    plt.plot(evaluation_points, np.transpose(fx), '--', label=r'$f(x)$')
+    plt.plot(x, np.transpose(y), '-', label=r'$u(x)$')
+    plt.legend()
+    plt.title("Solution of 1d Poisson equation")
+    plt.savefig("../output/poisson1d-test.png")
+    plt.close()
+
 @app.route('/solve', methods=['POST'])
 def solve():
     data = request.json
-    x = np.linspace(-10, 10, 100)
-    y = np.zeros_like(x)
-
-    for item in data:
-        power = item['power']
-        value = item['value']
-        y += value * np.power(x, power)
-
-    x_tensor = torch.from_numpy(x).float().unsqueeze(1)
-    y_tensor = model(x_tensor).detach().numpy()
-
-    plt.figure()
-    plt.plot(x, y_tensor, label="u(x)")
-    plt.xlabel("x")
-    plt.ylabel("u(x)")
-    plt.legend()
-    plt.grid()
-    plt.savefig('output.png')
-    plt.close()
-
-    return jsonify({"x": x.tolist(), "y": y_tensor.flatten().tolist()})
-
-@app.route('/output.png')
-def output_file():
-    return send_file('output.png', mimetype='image/png')
+    poly = {item['power']: item['value'] for item in data}
+    poisson1d_solver(poly)
+    return send_file('../output/poisson1d-test.png', mimetype='image/png')
 
 if __name__ == '__main__':
     app.run(debug=True)
