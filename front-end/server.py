@@ -57,7 +57,7 @@ def poisson1d_solver(poly: dict) -> None:
     model = dde.Model(pde_op, net)
     dde.optimizers.set_LBFGS_options(maxiter=1000)
     model.compile("L-BFGS")
-    model.restore("../params/params.ckpt-1000.pt", device='cpu')
+    model.restore("../back-end/params/params.ckpt-1000.pt", device='cpu')
 
     max_deg = max(poly.keys())
     features = np.zeros(shape=(1, max_deg+1), dtype=np.float32)
@@ -75,7 +75,7 @@ def poisson1d_solver(poly: dict) -> None:
     plt.plot(x, np.transpose(y), '-', label=r'$u(x)$')
     plt.legend()
     plt.title("Solution of 1d Poisson equation")
-    plt.savefig("../output/poisson1d-test.png")
+    plt.savefig("../back-end/output/poisson1d-test/.png")
     plt.close()
 
 @app.route('/solve', methods=['POST'])
