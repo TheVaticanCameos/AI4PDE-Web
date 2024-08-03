@@ -100,7 +100,7 @@ pip install -r requirements.txt
 ```bash
 cd /path/to/back-end
 python3 -m venv env
-. ./bin/activate
+. ./env/bin/activate
 pip install -r requirements.txt
 ```
 
