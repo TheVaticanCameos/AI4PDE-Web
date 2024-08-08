@@ -1,12 +1,18 @@
 """Backend supported: tensorflow.compat.v1, tensorflow, pytorch"""
+import os
+from pathlib import Path
+
 import deepxde as dde
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 matplotlib.use("Agg")
 
+root_dir: str = str(Path(__file__).parent.parent.parent)
+model_path: str = os.path.join(root_dir, 'back-end', 'params', 'params.ckpt-1000.pt')
+png_path: str = os.path.join(root_dir, 'back-end', 'output', 'poisson1d-test.png')
 
-def poisson1d_solver(poly: dict) -> None:
+def poisson1d_solver(poly: dict) -> dict[str, list[float]]:
     # Poisson equation: -u_xx = f
     def equation(x, y, f):
         dy_xx = dde.grad.hessian(y, x)
@@ -28,7 +34,7 @@ def poisson1d_solver(poly: dict) -> None:
     pde = dde.data.PDE(geom, equation, bc, num_domain=100, num_boundary=2)
 
     # Function space for f(x) are polynomials
-    degree = 3
+    degree = max(poly.keys())
     space = dde.data.PowerSeries(N=degree + 1)
 
     # Choose evaluation points
@@ -57,7 +63,7 @@ def poisson1d_solver(poly: dict) -> None:
     model = dde.Model(pde_op, net)
     dde.optimizers.set_LBFGS_options(maxiter=1000)
     model.compile("L-BFGS")
-    model.restore("../params/params.ckpt-1000.pt")
+    model.restore(model_path)
 
     max_deg = max(poly.keys())
     features = np.zeros(shape=(1, max_deg+1), dtype=np.float32)
@@ -75,9 +81,11 @@ def poisson1d_solver(poly: dict) -> None:
     plt.plot(x, np.transpose(y), '-', label=r'$u(x)$')
     plt.legend()
     plt.title("Solution of 1d Poisson equation")
-    plt.savefig("../output/poisson1d-test.png")
+    plt.savefig(png_path)
     plt.close()
+    return {'x': x.ravel().tolist(), 'y': y.ravel().tolist()}
 
 
 # usage example:
-# poisson1d_solver({0: 1, 1: 1, 2: 1, 3: 1})
+if __name__ == '__main__':
+    poisson1d_solver({0: 1, 1: 1, 2: 1, 3: 1})

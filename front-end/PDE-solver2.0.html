@@ -331,12 +331,12 @@
         }  
 
 
-        function sendData() {  
+        async function sendData() {  
             const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {  
                 return {power: index, value: parseFloat(span.innerText)};  
             });  
 
-            fetch('/solve', {  
+            await fetch('/solve', {  
                 method: 'POST',  
                 headers: {  
                     'Content-Type': 'application/json',  
