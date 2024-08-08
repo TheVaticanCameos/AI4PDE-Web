@@ -23,9 +23,5 @@ def solve():
 def main_page():
     return send_file(html_path, mimetype='text/html')
 
-@app.route('/')
-def main_page():
-    return send_file('PDE-solver2.0.html', mimetype='text/html')
-
 if __name__ == '__main__':
     app.run(debug=True)

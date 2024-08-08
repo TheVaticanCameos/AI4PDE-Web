@@ -1,12 +1,9 @@
 """Backend supported: tensorflow.compat.v1, tensorflow, pytorch"""
 import os
 from pathlib import Path
-
 import deepxde as dde
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
-matplotlib.use("Agg")
+
 
 root_dir: str = str(Path(__file__).parent.parent.parent)
 model_path: str = os.path.join(root_dir, 'back-end', 'params', 'params.ckpt-1000.pt')
@@ -74,15 +71,6 @@ def poisson1d_solver(poly: dict) -> dict[str, list[float]]:
     x = geom.uniform_points(100, boundary=True)
     y = model.predict((fx, x))
 
-    fig = plt.figure(figsize=(4, 8))
-    z = np.zeros_like(x)
-    plt.plot(x, z, 'k-', alpha=0.1)
-    plt.plot(evaluation_points, np.transpose(fx), '--', label=r'$f(x)$')
-    plt.plot(x, np.transpose(y), '-', label=r'$u(x)$')
-    plt.legend()
-    plt.title("Solution of 1d Poisson equation")
-    plt.savefig(png_path)
-    plt.close()
     return {'x': x.ravel().tolist(), 'y': y.ravel().tolist()}
 
 
