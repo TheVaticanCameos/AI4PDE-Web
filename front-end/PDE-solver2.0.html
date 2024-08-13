@@ -3,8 +3,9 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>PDE求解器</title>  
-    <style>  
+    <title>PDE求解器</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
         body {  
             margin: 0;  
             padding: 20px;  
@@ -128,7 +129,7 @@
         }  
         .dark-mode #themeToggle {  
             background-color: #b8b7b7; /* 浅灰色 */  
-        }  
+        }
         /* 浅色模式下按钮样式 */  
         button.light-mode {  
             background-color: #007BFF; /* 蓝色 */  
@@ -153,7 +154,11 @@
             background-color: #0000007d;  
             border-color: #f9f8f889;  
             color: #ffffff;  
-        }  
+        }
+        #plotlyDiv {
+            width: 100px; /* 设置一个合适的宽度 */
+            height: 100px; /* 设置一个合适的高度 */
+        }
     </style>  
 </head>  
 <body>  
@@ -174,10 +179,9 @@
     </div>  
 
     <div class="image-container">  
-        <canvas id="solutionCanvas" width="300" height="300"></canvas>
+        <div id="solutionCanvas" ></div>
         <p>u(x)</p>  
-    </div>  
-
+    </div>
     <script>  
         let sliderCount = -1;  
 
@@ -234,101 +238,101 @@
         // 初始化  
         addSlider();  
 
-        function addSlider() {  
-            sliderCount++;  
+        function addSlider() {
+            sliderCount++;
 
-            // 创建一个新的滑块  
-            var sliderContainer = document.createElement('div');  
-            sliderContainer.className = 'slider-container';  
+            // 创建一个新的滑块
+            var sliderContainer = document.createElement('div');
+            sliderContainer.className = 'slider-container';
 
-            // 根据当前页面主题选择容器样式  
-            if (document.body.classList.contains('dark-mode')) {  
-                sliderContainer.classList.add('dark-mode');  
-            } else {  
-                sliderContainer.classList.add('light-mode');  
-            }  
+            // 根据当前页面主题选择容器样式
+            if (document.body.classList.contains('dark-mode')) {
+                sliderContainer.classList.add('dark-mode');
+            } else {
+                sliderContainer.classList.add('light-mode');
+            }
 
-            var titleLabel = document.createElement('label');  
-            titleLabel.innerText = 'x^' + sliderCount;  
+            var titleLabel = document.createElement('label');
+            titleLabel.innerText = 'x^' + sliderCount;
 
-            // 创建输入框  
-            var minInput = document.createElement('input');  
-            minInput.type = 'number';  
-            minInput.placeholder = '最小值';  
-            minInput.value = 1;  
+            // 创建输入框
+            var minInput = document.createElement('input');
+            minInput.type = 'number';
+            minInput.placeholder = '最小值';
+            minInput.value = 1;
 
-            var maxInput = document.createElement('input');  
-            maxInput.type = 'number';  
-            maxInput.placeholder = '最大值';  
-            maxInput.value = 100;  
+            var maxInput = document.createElement('input');
+            maxInput.type = 'number';
+            maxInput.placeholder = '最大值';
+            maxInput.value = 100;
 
-            // 创建滑块  
-            var rangeInput = document.createElement('input');  
-            rangeInput.type = 'range';  
-            rangeInput.oninput = function() {  
-                sliderValue.innerText = rangeInput.value;  
-                updateSliderValuesDisplay();  
-            };  
+            // 创建滑块
+            var rangeInput = document.createElement('input');
+            rangeInput.type = 'range';
+            rangeInput.oninput = function() {
+                sliderValue.innerText = rangeInput.value;
+                updateSliderValuesDisplay();
+            };
 
-            // 创建输出值文本  
-            var sliderValue = document.createElement('span');  
-            sliderValue.className = 'output';  
-            sliderValue.innerText = rangeInput.value;  
+            // 创建输出值文本
+            var sliderValue = document.createElement('span');
+            sliderValue.className = 'output';
+            sliderValue.innerText = rangeInput.value;
 
-            // 根据当前页面主题选择输出值文本颜色  
-            if (document.body.classList.contains('dark-mode')) {  
-                sliderValue.classList.add('dark-mode');  
-            } else {  
-                sliderValue.classList.add('light-mode');  
-            }  
+            // 根据当前页面主题选择输出值文本颜色
+            if (document.body.classList.contains('dark-mode')) {
+                sliderValue.classList.add('dark-mode');
+            } else {
+                sliderValue.classList.add('light-mode');
+            }
 
-            // 添加元素  
-            sliderContainer.appendChild(titleLabel);  
-            sliderContainer.appendChild(minInput);  
-            sliderContainer.appendChild(maxInput);  
-            sliderContainer.appendChild(rangeInput);  
-            sliderContainer.appendChild(sliderValue);  
+            // 添加元素
+            sliderContainer.appendChild(titleLabel);
+            sliderContainer.appendChild(minInput);
+            sliderContainer.appendChild(maxInput);
+            sliderContainer.appendChild(rangeInput);
+            sliderContainer.appendChild(sliderValue);
 
-            // 滑块更新   
-            function updateRange() {  
-                var minValue = parseInt(minInput.value);  
-                var maxValue = parseInt(maxInput.value);  
+            // 滑块更新
+            function updateRange() {
+                var minValue = parseInt(minInput.value);
+                var maxValue = parseInt(maxInput.value);
 
-                if (minValue > maxValue) {  
-                    alert("最小值必须小于等于最大值！");  
-                    return;  
-                }  
+                if (minValue > maxValue) {
+                    alert("最小值必须小于等于最大值！");
+                    return;
+                }
 
-                rangeInput.min = minValue;  
-                rangeInput.max = maxValue;  
-                rangeInput.value = Math.max(minValue, Math.min(maxValue, rangeInput.value));  
-                sliderValue.innerText = rangeInput.value; // 更新输出值  
-                updateSliderValuesDisplay(); // 更新<h3>的值  
-            }  
+                rangeInput.min = minValue;
+                rangeInput.max = maxValue;
+                rangeInput.value = Math.max(minValue, Math.min(maxValue, rangeInput.value));
+                sliderValue.innerText = rangeInput.value; // 更新输出值
+                updateSliderValuesDisplay(); // 更新<h3>的值
+            }
 
-            function updateSliderValuesDisplay() {  
-                const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {  
-                    const power = index; // 当前滑块的幂数  
-                    return `${span.innerText}x^${power}`; // 按多项式形式构造字符串  
-                });  
+            function updateSliderValuesDisplay() {
+                const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {
+                    const power = index; // 当前滑块的幂数
+                    return `${span.innerText}x^${power}`; // 按多项式形式构造字符串
+                });
 
-                // 将多项式值显示在 <h3> 中  
-                document.getElementById('sliderValues').innerText = '当前f(x): ' + sliderValues.join(' + ');  
-            }  
+                // 将多项式值显示在 <h3> 中
+                document.getElementById('sliderValues').innerText = '当前f(x): ' + sliderValues.join(' + ');
+            }
 
-            // 添加输入框事件处理  
-            minInput.addEventListener('input', updateRange);  
-            maxInput.addEventListener('input', updateRange);  
-            rangeInput.addEventListener('input', function() {  
-                sliderValue.innerText = rangeInput.value; // 更新输出值  
-                updateSliderValuesDisplay(); // 更新<h3>的值  
-            });  
+            // 添加输入框事件处理
+            minInput.addEventListener('input', updateRange);
+            maxInput.addEventListener('input', updateRange);
+            rangeInput.addEventListener('input', function() {
+                sliderValue.innerText = rangeInput.value; // 更新输出值
+                updateSliderValuesDisplay(); // 更新<h3>的值
+            });
 
-            // 将新的滑块容器添加到页面  
-            document.getElementById('sliders').appendChild(sliderContainer);  
+            // 将新的滑块容器添加到页面
+            document.getElementById('sliders').appendChild(sliderContainer);
 
-            updateRange();  
-        }  
+            updateRange();
+        }
 
 
         async function sendData() {  
@@ -350,28 +354,42 @@
             .catch((error) => {  
                 console.error('Error:', error);  
             });  
-        }  
-
-        function drawSolution(data) {  
-            const canvas = document.getElementById('solutionCanvas');  
-            const ctx = canvas.getContext('2d');  
-            ctx.clearRect(0, 0, canvas.width, canvas.height);  
-
-            // 解析并绘制返回的结果  
+        }
+        function drawSolution(data) {
             const xValues = data.x;
             const yValues = data.y;
 
-            ctx.beginPath();  
-            ctx.moveTo(xValues[0], canvas.height - yValues[0]);  
+            const xMin = Math.min(...xValues);
+            const xMax = Math.max(...xValues);
+            const yMin = Math.min(...yValues);
+            const yMax = Math.max(...yValues);
 
-            for (let i = 1; i < xValues.length; i++) {  
-                ctx.lineTo(xValues[i], canvas.height - yValues[i]);  
-            }  
+            const xScale = 1 / (xMax - xMin);
+            const yScale = 1 / (yMax - yMin);
 
-            ctx.strokeStyle = '#007BFF';  
-            ctx.lineWidth = 2;  
-            ctx.stroke();  
-        }  
+            const plotlyData = [{
+                type: 'scatter',
+                mode: 'lines',
+                x: xValues.map(x => (x - xMin) * xScale),
+                y: yValues.map(y => 1 - ((y - yMin) * yScale)),
+                line: {
+                    color: '#007BFF',
+                    width: 2
+                }
+            }];
+
+            const plotlyLayout = {
+                title: 'predicted function',
+                xaxis: {
+                    title: 'X ',
+                },
+                yaxis: {
+                    title: 'u(x)',
+                }
+            };
+
+            Plotly.newPlot('solutionCanvas', plotlyData, plotlyLayout);
+                }
     </script>  
 </body>  
 </html>

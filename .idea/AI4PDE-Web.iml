@@ -6,8 +6,9 @@
       <sourceFolder url="file://$MODULE_DIR$/python3.12/DLLs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/python3.12/Lib" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/env" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.12 (AI4PDE-Web)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 virtualenv at C:\Users\21845\AI4PDE-web\back-end\env" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
