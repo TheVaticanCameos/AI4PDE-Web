@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDE Solver Poisson</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+    <link rel="icon" href="logo.png" type="image/x-icon">
+    
+    <style>
+        /* 通用样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            background: #000000;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 漂浮动画 */
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* 顶部导航栏样式 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            top : 0;
+            position: fixed;
+            align-items: center;
+            width: 100%;
+            padding: 20px 50px 20px 50px;
+            background: rgba(0, 0, 0, 0.619);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 3;
+        }
+
+        header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        header nav {
+            position: absolute;
+            right: 10vw;
+            align-items: center;
+        }
+
+        header nav a {
+            margin-left: 30px;
+            margin-right: 3vw;
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        header nav a:hover {
+            color: #0ff;
+        }
+
+        /* 介绍板块样式 */
+        .introduction {
+            text-align: center;
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 200px;
+            left: 10%;
+            right: 3%;
+            bottom: 10%;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 20px;
+            padding:30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: inline-block;
+            width: 35%;
+            line-height: 30px;
+            height: auto;
+            overflow: auto; /* 确保内容超出时可以滚动 */
+        }
+
+        .introduction h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        .introduction h3 {
+            text-align: left;
+            font-size: 22px;
+            margin-bottom: 40px;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(100, 174, 223, 0.7);
+        }
+
+        .introduction p {
+            font-size: 22px;
+            margin-bottom: 30px;
+            text-align: left;
+            color: #0ff;
+        }
+
+        /* 自定义滚动条样式 */
+        .introduction::-webkit-scrollbar {
+            width: 12px; /* 滚动条宽度 */
+        }
+
+        .introduction::-webkit-scrollbar-track {
+            background: #34424c90; /* 滚动条轨道背景颜色 */
+        }
+
+        .introduction::-webkit-scrollbar-thumb {
+            background: #32d2dd; /* 滚动条滑块背景颜色 */
+            border-radius: 6px; /* 滚动条滑块圆角 */
+        }
+
+        .introduction::-webkit-scrollbar-thumb:hover {
+            background: #07748c; /* 滚动条滑块悬停时的背景颜色 */
+        }
+
+
+
+
+        .image-container {
+            text-align: center;
+            position: fixed;
+            top: 200px;
+            left: 60%;
+            right: 10%;
+            bottom: 10%;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 20px;
+            padding:30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: inline-block;
+            width: 27%;
+            line-height: 30px;
+        }
+
+        .slider-container {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            
+        }
+
+        .output {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000000;
+            text-shadow: none;
+        }
+        input[type="range"] {
+            width: 80%;
+            margin: 20px 0;
+        }
+        input[type="number"] {
+            width: 70px;
+            text-align: center;
+            border-radius: 20px; /* 设置圆角 */
+            margin: 0.5px;
+        }
+        input[type="number"]:focus {
+            border-color: #00f2ff; /* 修改聚焦时的边框颜色 */
+            outline: none; /* 去掉默认的聚焦outline */
+        }
+
+        #polynomial-input {
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+            margin: 10px;
+            padding: 1px 2% 1px 2%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #030303;
+        }
+
+        #coefficients {
+            margin-bottom: 10px;
+
+        }
+
+        label {
+            margin-right: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fdfdfd;
+        }
+
+        input {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #030303;
+        }
+
+        /* 按钮样式 */
+        button {
+            padding: 10px 20px;
+            margin-top: 2%;
+            margin-bottom: 2%;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #60bcc2; /* 默认为蓝色 */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #97c6ce;
+        }
+
+        /* 粒子背景 */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* 粒子背景层次最低 */
+        }
+
+        /* 底部样式 */
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            height: 30px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p, footer a {
+            color: #ccc;
+            margin: 0;
+            padding: 0;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        footer a:hover {
+            color: #0ff;
+            z-index: 3;
+        }
+
+</style>
+
+
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+
+    <!-- 主内容容器 -->
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <header>
+            <div class="logo">PDE Solver</div>
+            <nav>
+                <a href="../front-end/菜单/menu.html">Home</a>
+                <a href="#">About Us</a>
+                <a href="#">Help</a>
+                <a href="#">Contact</a>
+            </nav>
+        </header>
+
+        
+        <!-- 输入板块 -->
+        <div class="introduction">
+            <h2>Poisson</h2>
+            <h3 id="sliderValues">当前f(x): </h3>
+            <p>请输入方程的各项系数：</p>
+
+            <div>  
+                <button onclick="addSlider()">增加x的幂数</button>   
+            </div>  
+    
+            <div id="sliders"></div>  
+            <button onclick="sendData()">发送数据</button>
+        </div>
+
+        <!-- 输出板块 -->
+        <div class="image-container">
+            <h2>输出图像：</h2>
+            <div id="solutionCanvas" style="width: 100%; height: 100%;"></div>
+            <p>u(x)</p>
+        </div>
+
+
+
+        <!-- 底部版权信息 -->
+        <footer>
+            <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+    particles: {
+      number: {
+        value: 80,
+        density: {
+          enable: true,
+          value_area: 800
+        }
+      },
+      color: {
+        value: '#0ff'
+      },
+      shape: {
+        type: 'circle',
+        stroke: {
+          width: 0,
+          color: '#000000'
+        }
+      },
+      opacity: {
+        value: 0.5,
+        random: true,
+        anim: {
+          enable: false,
+          speed: 1,
+          opacity_min: 0.1,
+          sync: false
+        }
+      },
+      size: {
+        value: 3,
+        random: true,
+        anim: {
+          enable: false,
+          speed: 40,
+          size_min: 0.1,
+          sync: false
+        }
+      },
+      line_linked: {
+        enable: true,
+        distance: 150,
+        color: '#0ff',
+        opacity: 0.4,
+        width: 1
+      },
+      move: {
+        enable: true,
+        speed: 6,
+        direction: 'none',
+        random: false,
+        straight: false,
+        out_mode: 'out',
+        bounce: false,
+        attract: {
+          enable: false,
+          rotateX: 600,
+          rotateY: 1200
+        }
+      }
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: {
+        onhover: {
+          enable: true,
+          mode: 'repulse'
+        },
+        onclick: {
+          enable: true,
+          mode: 'push'
+        },
+        resize: true
+      },
+      modes: {
+        grab: {
+          distance: 400,
+          line_linked: {
+            opacity: 1
+          }
+        },
+        bubble: {
+          distance: 400,
+          size: 40,
+          duration: 2,
+          opacity: 8,
+          speed: 3
+        },
+        repulse: {
+          distance: 200,
+          duration: 0.4
+        },
+        push: {
+          particles_nb: 4
+        },
+        remove: {
+          particles_nb: 2
+        }
+      }
+    },
+    retina_detect: true,
+    z_index: 1
+  });
+
+
+
+
+// 页面加载完成后，调用 addSlider 函数渲染 x^0
+document.addEventListener("DOMContentLoaded", function() {
+    sliderCount = -1; // 初始化为 -1，这样 addSlider 调用后，sliderCount 为 0
+    addSlider(); // 首次加载时调用，渲染 x^0
+});
+
+function addSlider() {
+sliderCount++;
+
+// 创建一个新的滑块
+var sliderContainer = document.createElement('div');
+sliderContainer.className = 'slider-container';
+sliderContainer.style.marginBottom = '20px';
+
+var titleLabel = document.createElement('label');
+ // 这里使用 KaTeX 渲染公式
+ titleLabel.innerHTML = `x^${sliderCount}`;
+ titleLabel.className = 'latex-equation'; // 为标签添加一个特定的类名
+
+
+// 创建输入框
+var minInput = document.createElement('input');
+minInput.type = 'number';
+minInput.placeholder = '最小值';
+minInput.value = 1;
+
+// 创建输出值文本
+var sliderValue = document.createElement('span');
+sliderValue.className = 'output';
+sliderValue.innerText = minInput.value; // 默认输出为最小值
+
+// 添加元素
+sliderContainer.appendChild(titleLabel);
+sliderContainer.appendChild(minInput);
+sliderContainer.appendChild(sliderValue);
+
+sliderValue.style.display = 'none';
+
+// 更新滑块值和展示内容
+function updateRange() {
+var minValue = parseInt(minInput.value);
+
+
+sliderValue.innerText = minValue;  // 可以根据其他逻辑调整具体输出值
+updateSliderValuesDisplay(); // 更新<h3>的值
+}
+
+function updateSliderValuesDisplay() {
+const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {
+    const power = index; // 当前滑块的幂数
+    const coefficient = parseInt(span.innerText);
+
+    if (isNaN(coefficient)) {
+            return ''; // 如果系数解析失败，返回空字符串
+        }
+
+    // 如果系数为1且幂次不为0，则省略系数
+    if (coefficient === 1 && power !== 0) {
+        return `x^${power}`;
+    } else if (power === 0) {
+        return `${coefficient}`; // x^0时保留系数
+    } else if (coefficient === 0) {
+        return ''; // 如果系数为0，不显示这项
+    } else if (coefficient === -1 && power !== 0) {
+        return `-x^${power}`;// 系数为-1且幂次不为0时，只显示负号
+    } else {
+        return `${coefficient}x^${power}`;
+    }
+});
+
+
+// 合并非空项，并确保没有多余的加号
+let fxExpression = '';
+for (let i = 0; i < sliderValues.length; i++) {
+    if (i === 0) {
+        fxExpression += sliderValues[i];
+    } else if (sliderValues[i].startsWith('-')) {
+        fxExpression += ` ${sliderValues[i]}`;
+    } else if (sliderValues[i]==='') {
+        fxExpression += `${sliderValues[i]}`;
+    } else {
+        fxExpression += ` + ${sliderValues[i]}`;
+    }
+}
+
+// 将多项式值显示在 <h3> 中
+const fxElement = document.getElementById('sliderValues');
+katex.render(`当前f(x) = ${fxExpression}`, fxElement);
+
+}
+
+// 添加输入框事件处理
+minInput.addEventListener('input', updateRange);
+// 将新的滑块容器添加到页面
+document.getElementById('sliders').appendChild(sliderContainer);
+
+updateRange();
+
+
+// 使用 KaTeX 渲染滑块前的公式
+katex.render(`x^${sliderCount}`, titleLabel);
+}
+
+
+
+ async function sendData() {
+    const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {
+        return {power: index, value: parseFloat(span.innerText)};
+    });
+
+    await fetch('/solve', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sliderValues),
+    })
+    .then(response => response.json())
+    .then(data => {
+        drawSolution(data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+function drawSolution(data) {
+    const xValues = data.x;
+    const yValues = data.y;
+
+    const xMin = Math.min(...xValues);
+    const xMax = Math.max(...xValues);
+    const yMin = Math.min(...yValues);
+    const yMax = Math.max(...yValues);
+
+    const xScale = 1 / (xMax - xMin);
+    const yScale = 1 / (yMax - yMin);
+
+    const plotlyData = [{
+        type: 'scatter',
+        mode: 'lines',
+        x: xValues.map(x => (x - xMin) * xScale),
+        y: yValues.map(y => 1 - ((y - yMin) * yScale)),
+        line: {
+            color: '#007BFF',
+            width: 2
+        }
+    }];
+
+    const plotlyLayout = {
+        title: 'predicted function',
+        xaxis: {
+            title: 'X ',
+        },
+        yaxis: {
+            title: 'u(x)',
+        }
+    };
+
+    Plotly.newPlot('solutionCanvas', plotlyData, plotlyLayout);
+        }
+
+
+
+//让 introduction 板块的长度随着滑块个数的增加而变长
+const sliderContainer = document.getElementById('slider-container');
+const sliders = sliderContainer.getElementsByClassName('slider');
+const introduction = document.querySelector('.introduction');
+
+// 定义一个函数来更新 introduction 的高度
+function updateIntroductionHeight() {
+    const newHeight = 200 + (sliders.length * 30); // 假设每个滑块增加 30px 高度
+    introduction.style.height = `${newHeight}px`;
+}
+
+// 初始化 introduction 的高度
+updateIntroductionHeight();
+
+document.getElementById('add-slider-btn').addEventListener('click', function() {
+    updateIntroductionHeight();
+});
+       
+    </script>
+</body>
+</html>
