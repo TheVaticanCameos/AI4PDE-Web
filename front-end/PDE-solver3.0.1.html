@@ -24,6 +24,7 @@
             background: #000000;
             position: relative;
             scroll-behavior: smooth;
+            overflow: auto;
         }
 
         .container {
@@ -165,7 +166,7 @@
             top: 200px;
             left: 60%;
             right: 10%;
-            bottom: 10%;
+            margin-bottom: 10%;
             color: #0ff;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
             text-decoration: none;
@@ -179,6 +180,7 @@
             letter-spacing: 3px;
             display: inline-block;
             width: 27%;
+            height: 500px;
             line-height: 30px;
         }
 
@@ -220,7 +222,7 @@
             padding: 1px 2% 1px 2%;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #030303;
+            background-color: #000000;
         }
 
         #coefficients {
@@ -242,6 +244,11 @@
             color: #030303;
         }
 
+        #result {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00fbff;
+        }
         /* 按钮样式 */
         button {
             padding: 10px 20px;
@@ -319,8 +326,8 @@
         
         <!-- 输入板块 -->
         <div class="introduction">
-            <h2>Poisson</h2>
-            <h3 id="sliderValues">当前f(x): </h3>
+            <h2>Poisson：u''(x)=f(x)</h2>
+            <h3 id="sliderValues"> </h3>
             <p>请输入方程的各项系数：</p>
 
             <div>  
@@ -329,12 +336,18 @@
     
             <div id="sliders"></div>  
             <button onclick="sendData()">发送数据</button>
+
+            <p>输入 x 值 (0 ≤ x ≤ 1):</p>
+            <input type="number" id="x-input" min="0" max="1" step="0.01" value="0.5">
+            <button onclick="sendData()">计算u(x)</button>
+            <p id="result"></p>
+
         </div>
 
         <!-- 输出板块 -->
         <div class="image-container">
             <h2>输出图像：</h2>
-            <div id="solutionCanvas" style="width: 100%; height: 100%;"></div>
+            <div id="solutionCanvas" style="width: 100%; height: 80%;"></div>
             <p>u(x)</p>
         </div>
 
@@ -574,13 +587,23 @@ katex.render(`x^${sliderCount}`, titleLabel);
         },
         body: JSON.stringify(sliderValues),
     })
+
+    
+
     .then(response => response.json())
+    .then(data => {
+        calculateUx(data);
+        return data;
+    })
     .then(data => {
         drawSolution(data);
     })
+    
     .catch((error) => {
         console.error('Error:', error);
     });
+
+    calculateUx(data);
 }
 function drawSolution(data) {
     const xValues = data.x;
@@ -598,7 +621,7 @@ function drawSolution(data) {
         type: 'scatter',
         mode: 'lines',
         x: xValues.map(x => (x - xMin) * xScale),
-        y: yValues.map(y => 1 - ((y - yMin) * yScale)),
+        y: yValues.map(y => y),
         line: {
             color: '#007BFF',
             width: 2
@@ -616,9 +639,42 @@ function drawSolution(data) {
     };
 
     Plotly.newPlot('solutionCanvas', plotlyData, plotlyLayout);
+}
+
+        function calculateUx(data) {
+
+            // 对 xValues 和 yValues 进行排序，确保对应关系不变
+    const sortedData = data.x.map((x, i) => ({ x: x, y: data.y[i] }))
+                             .sort((a, b) => a.x - b.x);
+    const xValues = sortedData.map(item => item.x);
+    const yValues = sortedData.map(item => item.y);
+
+            const userX = parseFloat(document.getElementById('x-input').value);
+            
+             // 找到离 userX 最近的两个自变量值及其对应的 y 值
+            let x1 = null, x2 = null, y1 = null, y2 = null;
+            for (let i = 0; i < xValues.length - 1; i++) {
+                if (xValues[i] <= userX && xValues[i + 1] >= userX) {
+                    x1 = xValues[i];
+                    x2 = xValues[i + 1];
+                    y1 = yValues[i];
+                    y2 = yValues[i + 1];
+                    break;
+                }
+            }
+
+            // 显示结果
+            if (x1 !== null && x2 !== null) {
+                const resultElement = document.getElementById('result');
+                let ux = (userX - x1) / (x2 - x1) * y2 + (x2 - userX) / (x2 - x1) * y1;
+                katex.render(`u(x)=${ux}`, resultElement);
+            } else {
+                const resultElement = document.getElementById('result');
+                resultElement.innerText = '未找到合适的 x 值范围';
+                katex.render(`u(x)=Error`, resultElement);
+            }
         }
-
-
+    
 
 //让 introduction 板块的长度随着滑块个数的增加而变长
 const sliderContainer = document.getElementById('slider-container');
