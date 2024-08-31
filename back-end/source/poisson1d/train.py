@@ -62,7 +62,7 @@ dde.optimizers.set_LBFGS_options(maxiter=1000)
 model.compile("L-BFGS")
 model.train()
 
-model.save("../params/params.ckpt")
+model.save("../../params/poisson1d-params.ckpt")
 
 # Plot realisations of f(x)
 n = 3
