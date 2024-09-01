@@ -55,19 +55,13 @@ def upload_file():
         # 打印结果
         print("Result:", result)
 
-        # 将二维数组转换为字典列表
-        result_dict_list = []
-        for row in result:
-            result_dict_list.append({
-                "id": int(row[0]),
-                "name": str(row[1]),
-                "value": float(row[2])
-            })
-
-        print("Result Dict List:", result_dict_list)
+        # 将ndarray转换为嵌套列表
+        result_nested_list = result.tolist()
+        
+        print("Result nested list:", result_nested_list)
 
         # 返回结果给前端
-        return jsonify({"result": result_dict_list})
+        return jsonify({"result": result_nested_list})
 
     
 
