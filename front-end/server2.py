@@ -9,7 +9,6 @@ from flask import Flask, request, send_file, jsonify
 app = Flask(__name__)
 root_dir: str = str(Path(__file__).resolve().parent.parent)
 model_path: str = os.path.join(root_dir, 'back-end', 'params', 'dr-params.ckpt-20000.pt')
-upload_folder: str = os.path.join(root_dir, 'front-end','upload')  # 上传文件的存储路径
 png_path: str = os.path.join(root_dir, 'back-end', 'output', 'dr.png')
 html_path: str = os.path.join(root_dir, 'front-end', 'Diffusion-Reaction.html')
 
