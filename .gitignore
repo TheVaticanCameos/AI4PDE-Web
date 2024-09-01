@@ -6,3 +6,4 @@ basic-info/
 env/
 *.png
 __pycache__/
+.idea/
