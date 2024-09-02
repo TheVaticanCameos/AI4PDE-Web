@@ -4,7 +4,237 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>High-Tech PDE Solver Menu</title>
-    <link rel="stylesheet" href="menu_style.css">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+
+    <style>
+        /* 通用样式 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    background: #000000;
+    position: relative;
+    scroll-behavior: smooth;
+}
+
+.container {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 漂浮动画 */
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* 顶部导航栏样式 */
+header {
+    display: flex;
+    justify-content: space-between;
+    top : 0;
+    position: fixed;
+    align-items: center;
+    width: 100%;
+    padding: 20px 50px 20px 50px;
+    background: rgb(0, 0, 0);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 3;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+header nav {
+    position: absolute;
+    right: 10vw;
+    align-items: center;
+}
+
+header nav a {   
+    margin-left: 30px;
+    margin-right: 3vw;
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+header nav a:hover {
+    color: #0ff;
+}
+
+/* 介绍板块样式 */
+.introduction {
+    text-align: center;
+    margin-top: 200px;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-bottom: 30px; 
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 20px;
+    color: #fff;
+    padding:30px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    display: inline-block;
+    text-align: center;
+    line-height: 20px;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite; 
+}
+
+.introduction:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.introduction h2 {
+    font-size: 30px;
+    margin-bottom: 40px;
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+.introduction p {
+    font-size: 22px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.introduction ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.introduction ul li {
+    font-size: 18px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.introduction ul li::before {
+    content: "•";
+    color: #0ff;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+
+/* 中心主菜单样式 */
+main {
+    position: relative;
+    z-index: 2; /* 确保主内容区在粒子背景上方 */
+    margin-top: 100px; /* 确保内容在导航栏下方 */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 10%;
+}
+
+main h1 {
+    font-size: 36px;
+    margin-bottom: 40px;
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+    animation: float 3s ease-in-out infinite; 
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    gap:60px;
+    animation: float 3s ease-in-out infinite; 
+}
+
+.menu-item {
+    text-decoration: none;
+    font-size: 24px;
+    color: #fff;
+    padding:30px;
+    background: rgba(0, 0, 0, 0.53);
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: inline-block;
+    text-align: center;
+    width: 200px;
+    line-height: 200px;
+    height: 200px;
+}
+
+
+.menu-item:hover {
+  color: rgba(0, 255, 255, 0.7);
+    transform: translateY(-10px);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* 粒子背景 */
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* 粒子背景层次最低 */
+}
+
+/* 底部样式 */
+footer {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 20px 0;
+    height: 30px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+footer p, footer a {
+    color: #ccc;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+footer a:hover {
+    color: #0ff;
+    z-index: 3;
+}
+
+    </style>
+
 </head>
 <body>
     <!-- 粒子背景 -->
@@ -40,8 +270,8 @@
         <main>
             <h1>Select PDE Equation Type</h1>
             <div class="menu">
-                <a href="../PDE-solver2.0.html" target="_blank" class="menu-item">Poisson</a>
-                <a href="#" class="menu-item">XXXXXX</a>
+                <a href="PDE-solver3.0.1.html" class="menu-item">泊松方程</a>
+                <a href="Diffusion-Reaction.html" class="menu-item">反应扩散方程</a>
                 <a href="#" class="menu-item">XXXXXX</a>
                 <a href="#" class="menu-item">XXXXXX</a>
             </div>
@@ -56,6 +286,111 @@
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="menu_script.js"></script>
+    <script>
+        particlesJS('particles-js', {
+    particles: {
+      number: {
+        value: 80,
+        density: {
+          enable: true,
+          value_area: 800
+        }
+      },
+      color: {
+        value: '#0ff'
+      },
+      shape: {
+        type: 'circle',
+        stroke: {
+          width: 0,
+          color: '#000000'
+        }
+      },
+      opacity: {
+        value: 0.5,
+        random: true,
+        anim: {
+          enable: false,
+          speed: 1,
+          opacity_min: 0.1,
+          sync: false
+        }
+      },
+      size: {
+        value: 3,
+        random: true,
+        anim: {
+          enable: false,
+          speed: 40,
+          size_min: 0.1,
+          sync: false
+        }
+      },
+      line_linked: {
+        enable: true,
+        distance: 150,
+        color: '#0ff',
+        opacity: 0.4,
+        width: 1
+      },
+      move: {
+        enable: true,
+        speed: 6,
+        direction: 'none',
+        random: false,
+        straight: false,
+        out_mode: 'out',
+        bounce: false,
+        attract: {
+          enable: false,
+          rotateX: 600,
+          rotateY: 1200
+        }
+      }
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: {
+        onhover: {
+          enable: true,
+          mode: 'repulse'
+        },
+        onclick: {
+          enable: true,
+          mode: 'push'
+        },
+        resize: true
+      },
+      modes: {
+        grab: {
+          distance: 400,
+          line_linked: {
+            opacity: 1
+          }
+        },
+        bubble: {
+          distance: 400,
+          size: 40,
+          duration: 2,
+          opacity: 8,
+          speed: 3
+        },
+        repulse: {
+          distance: 200,
+          duration: 0.4
+        },
+        push: {
+          particles_nb: 4
+        },
+        remove: {
+          particles_nb: 2
+        }
+      }
+    },
+    retina_detect: true,
+    z_index: 1
+  });
+  
+    </script>
 </body>
 </html>
