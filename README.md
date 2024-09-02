@@ -54,6 +54,8 @@ root/
 
 ### 后端代码运行方法
 
+后端代码说明见[文档：后端代码说明](back-end/README.md)
+
 > 以下步骤可能需要科学上网。
 
 #### 准备工作：Git 下载安装
@@ -103,19 +105,6 @@ python3 -m venv env
 . ./env/bin/activate
 pip install -r requirements.txt
 ```
-
-#### 运行方法
-
-运行`infer.py`，正常的话会在`back-end/output`目录下生成图片`poisson1d-test.png`（仓库中本来就有一张，可以将其删除后再运行）。
-
-### `infer.py`中的部分代码解释
-
-`poisson1d_solver(poly: dict)`函数接受一个字典`poly`，其键表示多项式的某一项次数，对应的值表示该项的系数。这一字典用于表示用户指定的右端多项式 $f(x)$。此函数将加载预训练好的模型参数`back-end/params/params.ckpt-1000.pt`，对一维 Poisson 方程求解，并将解的曲线绘制在`back-end/output/poisson1d-test.png`中，如下图所示。其中蓝色曲线表示用户输入的多项式 $f(x)$，橙色曲线表示模型输出的解 $u(x)$。
-
-<div  align="center">    
- <img src="back-end/output/poisson1d-test.png" style="zoom:90%" />
-</div>
-
 
 [^1]: [DeepONet: Learning nonlinear operators for identifying differential equations based on the universal approximation theorem of operators.](https://arxiv.org/abs/1910.03193)
 [^2]: [DeepXDE: a library for scientific machine learning and physics-informed learning.](https://github.com/lululxvi/deepxde/tree/master)
