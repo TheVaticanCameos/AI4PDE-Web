@@ -5,7 +5,7 @@
 后端目前提供了如何方程的求解：
 
 - 一维 Poisson 方程 [-> 文档](source/poisson1d/README.md)
-- 反应扩散方程（Diffusion-Reaction Equation）
+- 反应扩散方程（Diffusion-Reaction Equation） [-> 文档](source/diffusion-reaction/README.md)
 - 斯托克斯流（Stokes Flow）
 
 #### 后端代码项目结构
@@ -22,4 +22,6 @@ back-end/
 |   |--poisson1d/                       // 一维 Poisson 方程
 |   |--stokes-flow/                     // Stokes 流
 |   |--utils/                           // 辅助函数
+|--README.md                            // 后端说明文档
+|--requirements.txt                     // 环境依赖列表
 ```
