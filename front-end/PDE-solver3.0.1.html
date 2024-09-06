@@ -12,7 +12,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
-    <link rel="icon" href="logo.png" type="image/x-icon">
+    <link rel="icon" href="logo.ico" type="image/x-icon">
+
     
     <style>
         /* 通用样式 */
@@ -97,8 +98,8 @@
             position: fixed;
             top: 200px;
             left: 10%;
-            right: 3%;
-            bottom: 10%;
+            right: 20px;
+            bottom: 150px;
             color: #0ff;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
             text-decoration: none;
@@ -119,7 +120,7 @@
 
         .introduction h2 {
             font-size: 30px;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
             color: #0ff;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
         }
@@ -157,7 +158,17 @@
             background: #07748c; /* 滚动条滑块悬停时的背景颜色 */
         }
 
+        .introduction:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.9);
+        }
 
+        .image-container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.9);
+        }
 
 
         .image-container {
@@ -316,7 +327,7 @@
         <header>
             <div class="logo">PDE Solver</div>
             <nav>
-                <a href="../front-end/菜单/menu.html">Home</a>
+                <a href="menu.html">Home</a>
                 <a href="#">About Us</a>
                 <a href="#">Help</a>
                 <a href="#">Contact</a>
