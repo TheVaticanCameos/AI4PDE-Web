@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Tech PDE Solver Menu</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="style3.0.css">
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+
+    <!-- 主内容容器 -->
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <header>
+            <div class="logo">PDE Solver</div>
+            <nav>
+                <a href="../front-end/菜单/menu.html">Home</a>
+                <a href="#">About Us</a>
+                <a href="#">Help</a>
+                <a href="#">Contact</a>
+            </nav>
+        </header>
+
+        <div class="main_content">
+        <!-- 输入板块 -->
+        <div class="introduction">
+            <h2>Poisson</h2>
+            <h3 id="sliderValues">当前f(x): </h3>
+            <p>请输入方程的表达式：</p>
+
+            <div>  
+                <button onclick="addSlider()">增加x的幂数</button>   
+            </div>  
+    
+            <div id="sliders"></div>  
+            <button onclick="sendData()">发送数据</button>
+        </div>
+
+        <!-- 输出板块 -->
+        <div class="image-container">
+            <h2>输出图像：</h2>
+            <canvas id="solutionCanvas" width="300" height="300"></canvas>
+            <p>u(x)</p>
+        </div>
+
+        </div>
+
+        <!-- 底部版权信息 -->
+        <footer>
+            <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="style3.0.js"></script>
+</body>
+</html>

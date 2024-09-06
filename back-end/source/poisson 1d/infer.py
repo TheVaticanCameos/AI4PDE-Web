@@ -6,7 +6,7 @@ import numpy as np
 
 
 root_dir: str = str(Path(__file__).parent.parent.parent)
-model_path: str = os.path.join(root_dir, 'back-end', 'params', 'params.ckpt-1000.pt')
+model_path: str = os.path.join(root_dir, 'back-end', 'params', 'dr-params.ckpt-20000.pt')
 png_path: str = os.path.join(root_dir, 'back-end', 'output', 'poisson1d-test.png')
 
 def poisson1d_solver(poly: dict) -> dict[str, list[float]]:
