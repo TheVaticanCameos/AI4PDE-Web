@@ -134,7 +134,7 @@ def stokes_flow_solver(velocity: float) -> np.array:
     xy = np.vstack((np.ravel(xv), np.ravel(yv))).T
     sol_pred = model.predict((v, xy))[0]
 
-    # Plot the predicted solution
+    # Plot the predicted solution: commit line 138 - 157 if you don't want to plot the solution in the back-end
     def plot_sol(sol: np.array, pressure_lim: float = 0.03, vec_space: float = 4, vec_scale: float = .5, title: str = "") -> None:
         """
         Plot the velocity vector field and pressure field.
@@ -159,5 +159,6 @@ def stokes_flow_solver(velocity: float) -> np.array:
     return sol_pred
 
 
+# demo
 if __name__ == "__main__":
     sol = stokes_flow_solver(0.5)
