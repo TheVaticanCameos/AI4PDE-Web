@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>High-Tech PDE Solver Menu</title>
-    <link rel="icon" href="logo.png" type="image/x-icon">
+    <link rel="icon" href="logo.ico">
 
     <style>
         /* 通用样式 */
@@ -184,15 +184,17 @@ main h1 {
     transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     display: inline-block;
     text-align: center;
-    line-height: 200px;
     width: 200px;
+    line-height: 200px;
     height: 200px;
 }
 
+
 .menu-item:hover {
+  color: rgba(0, 255, 255, 0.7);
     transform: translateY(-10px);
     box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
     background: rgba(0, 0, 0, 0.9);
@@ -268,8 +270,8 @@ footer a:hover {
         <main>
             <h1>Select PDE Equation Type</h1>
             <div class="menu">
-                <a href="PDE-solver3.0.1.html" class="menu-item">Poisson</a>
-                <a href="#" class="menu-item">XXXXXX</a>
+                <a href="PDE-solver3.0.1.html" class="menu-item">泊松方程</a>
+                <a href="Diffusion-Reaction.html" class="menu-item">反应扩散方程</a>
                 <a href="#" class="menu-item">XXXXXX</a>
                 <a href="#" class="menu-item">XXXXXX</a>
             </div>

@@ -12,7 +12,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
-    <link rel="icon" href="logo.png" type="image/x-icon">
+    <link rel="icon" href="logo.ico" type="image/x-icon">
 
     <style>
         /* 通用样式 */
@@ -272,8 +272,8 @@
             <form id="input" action="/upload" method="post" enctype="multipart/form-data">
                 <input type="file" id="file-input" accept=".csv,.txt" />
                 <br>
-                <button type="button" onclick="uploadFileheat()">绘制热力图</button>
-                <button type="button" onclick="uploadFile3D()">绘制3D图</button>
+                <button id="heat" type="button" onclick="uploadFileheat()">绘制热力图</button>
+                <button id="3d" type="button" onclick="uploadFile3D()">绘制3D图</button>
                 <button type="button" onclick="uploadFilegif()">绘制gif</button>
             </form>
 
@@ -282,7 +282,7 @@
         <div class="image-container">
             <h2>输出图像：</h2>
             <div id="solutionCanvas" style="width: 95%; height: 70%;"></div>
-            <button id="playPauseButton" style="display: none;" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"></button>
+            <button id="playPauseButton" style="display: none;" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Play</button>
         </div>
     </main>
         <!-- 底部版权信息 -->
@@ -421,21 +421,27 @@ function showPlayPauseButton() {
 }
 
 
-let animationInterval; // 定义在函数外部
-let isAnimating = false; // 定义在函数外部
-const playPauseButton = document.getElementById('playPauseButton'); // 定义在函数外部
+let animationInterval = null;
+let isAnimating = false;
+const playPauseButton = document.getElementById('playPauseButton');
 
 function stopAnimation() {
     clearInterval(animationInterval);
-    playPauseButton.textContent = 'Play';
     isAnimating = false;
+    playPauseButton.textContent = 'Play';
 }
+
+function refreshCanvas() {
+    Plotly.purge('solutionCanvas');  // 清除旧图表
+    stopAnimation();  // 确保动画已停止
+}
+
 
 
   // 上传文件
 async function uploadFileheat() {
     hidePlayPauseButton();
-    stopAnimation();
+    refreshCanvas();
     const fileInput = document.getElementById('file-input');
     const file = fileInput.files[0];
     if (!file) {
@@ -468,7 +474,8 @@ async function uploadFileheat() {
 
 async function uploadFile3D() {
     hidePlayPauseButton();
-    stopAnimation();
+    refreshCanvas();
+
     const fileInput = document.getElementById('file-input');
     const file = fileInput.files[0];
     if (!file) {
@@ -500,6 +507,13 @@ async function uploadFile3D() {
 }
 async function uploadFilegif(){
     showPlayPauseButton();
+    refreshCanvas();
+    currentFrame = 0;
+    isAnimating = false;
+    if (animationInterval) {
+        clearInterval(animationInterval); // 清除现有定时器
+    }
+
     const fileInput = document.getElementById('file-input');
     const file = fileInput.files[0];
     if (!file) {
@@ -534,6 +548,7 @@ async function uploadFilegif(){
 
 //画图函数
 function drawHeatmap(data) {
+    refreshCanvas();
 
     // 打印输入数据的数据类型
     console.log('输入数据的数据类型:', typeof data);
@@ -557,11 +572,13 @@ function drawHeatmap(data) {
     const zmax = Math.max(...data.flat().flat());
     console.log('数据:', zmin, '和', zmax, '和', data.flat(), '和', data);
 
-    // 创建缩小后的 X 和 Y 值
-    const xValues = [0, 20, 40, 60, 80, 100].map(val => val / 100);
-    const yValues = [0, 20, 40, 60, 80, 100].map(val => val / 100);
+    // 创建从 0 到 100 的整数数组
+    const xValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100); // 生成 0 到 100 的整数
+    const yValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100); // 生成 0 到 100 的整数
 
     const trace = {
+        x: xValues,
+        y: yValues,
         z: data.flat(),
         type: 'heatmap',
         colorscale: 'Viridis', // 可以选择你喜欢的颜色刻度
@@ -572,24 +589,19 @@ function drawHeatmap(data) {
         },
         zmin: zmin,
         zmax: zmax,
-        hovertemplate: 'T: %{y:.2f}<br>X: %{x:.2f}<br>U: %{z:.2f}<extra></extra>', // 自定义鼠标悬停显示
+        hovertemplate: 'T(s): %{y:.2f}<br>X(m): %{x:.2f}<br>U(m/s): %{z:.2f}<extra></extra>', // 自定义鼠标悬停显示
     };
 
     const layout = {
         title: '热力图',
         xaxis: {
             title: 'x(m)',
-            tickvals: [0, 20, 40, 60, 80, 100], // 使用缩小后的 X 值
-            ticktext: xValues.map(val => val.toFixed(1)) // 显示的标签，保留四位小数
         },
         yaxis: {
             title: 't(s)',
-            tickvals: [0, 20, 40, 60, 80, 100], // 使用缩小后的 Y 值
-            ticktext: yValues.map(val => val.toFixed(1)) // 显示的标签，保留四位小数
         },
         zaxis: {
             title: 'u(x,t) (m/s)',
-            tickvals: [0, 5, 10, 15],
         }
     };
 
@@ -600,12 +612,7 @@ function drawHeatmap(data) {
 }
 
 function draw3D(data) {
-
-    // 检查暂停按钮的状态
-    const playPauseButton = document.getElementById('playPauseButton');
-    if (playPauseButton.textContent === 'Pause') {
-        stopAnimation();
-    }
+    refreshCanvas();
 
     // 打印输入数据的数据类型
     console.log('输入数据的数据类型:', typeof data);
@@ -629,17 +636,19 @@ function draw3D(data) {
     const zmax = Math.max(...data.flat().flat());
     console.log('数据:', zmin, '和', zmax, '和', data.flat(), '和', data);
 
-    // 创建缩小后的 X 和 Y 值
-    const xValues = [0, 20, 40, 60, 80, 100].map(val => val / 100);
-    const yValues = [0, 20, 40, 60, 80, 100].map(val => val / 100);
+    // 创建从 0 到 100 的整数数组
+    const xValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100); // 生成 0 到 100 的整数
+    const yValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100);
 
     const trace = {
+        x: xValues,
+        y: yValues,
         z: data.flat(),
         type: 'surface',
         colorscale: 'Viridis',
         cmin: zmin,
         cmax: zmax,
-        hovertemplate: 'T: %{y:.2f}<br>X: %{x:.2f}<br>U: %{z:.2f}<extra></extra>',
+        hovertemplate: 'T(s): %{y:.2f}<br>X(m): %{x:.2f}<br>U(m/s): %{z:.2f}<extra></extra>',
         // 自定义鼠标悬停显示
         colorbar: {
             title: '值',
@@ -653,29 +662,23 @@ function draw3D(data) {
         scene: {
             xaxis: {
                 title: 'x(m)',
-                tickvals: [0, 20, 40, 60, 80, 100],
-                ticktext: xValues.map(val => val.toFixed(2))
             },
             yaxis: {
                 title: 't(s)',
-                tickvals: [0, 20, 40, 60, 80, 100],
-                ticktext: yValues.map(val => val.toFixed(2))
             },
             zaxis: {
                 title: 'u(x,t) (m/s)',
-                tickvals: [0, 5, 10, 15],
             }
         }
     };
-
-
-
 
     Plotly.newPlot('solutionCanvas', [trace], layout)
         .then(() => console.log('三维立体图绘制成功'))
         .catch(error => console.error('绘制三维立体图时出错:', error));
 }
 function drawgif(data) {
+    refreshCanvas();
+
     // 打印输入数据的数据类型
     console.log('输入数据的数据类型:', typeof data);
     console.log('输入数据是否为数组:', Array.isArray(data));
@@ -694,32 +697,38 @@ function drawgif(data) {
         console.log('成功输入');
     }
 
-    const zmin = Math.min(...data.flat().flat());
-    const zmax = Math.max(...data.flat().flat());
+    // 缩小 X 值一百倍
+    const scaleFactor = 100;
     const frames = data.flat().map((row, i) => ({
         name: `Frame ${i}`,
-        data: [{ x: Array.from(Array(row.length).keys()), y: row, type: 'scatter' }]
+        data: [{ x: Array.from(Array(row.length).keys()).map(x => x / scaleFactor), y: row, type: 'scatter' }]
     }));
 
-    const initialData = [{ x: Array.from(Array(data[0].length).keys()), y: data.flat()[0], type: 'scatter' }];
+    const initialData = [{ x: Array.from(Array(data[0].length).keys()).map(x => x / scaleFactor), y: data.flat()[0], type: 'scatter' }];
+
+    const zmin = Math.min(...data.flat().flat());
+    const zmax = Math.max(...data.flat().flat());
 
     // Adjust the layout to set x and y axis ranges
     const layout = {
-        title: '放慢20倍的gif(点击paly开始播放)',
+        title: '放慢20倍的gif(点击play开始播放)',
         xaxis: {
             title: 'X(m)',
-            range: [0, data[0].length-1] // Adjust as needed
+            range: [0, data[0].length / scaleFactor ]
         },
         yaxis: {
             title: 'U(m/s)',
-            range: [zmin, zmax] // Use calculated min and max values
+            range: [zmin-0.1, zmax+0.1] // Use calculated min and max values
         }
     };
 
     Plotly.newPlot('solutionCanvas', initialData, layout).then(() => {
         let currentFrame = 0;
+        let isAnimating = false;
+        let animationInterval;
+
         const animate = () => {
-            Plotly.animate('solutionCanvas', frames[currentFrame], {
+                Plotly.animate('solutionCanvas', frames[currentFrame], {
                 transition: { duration: 50 },
                 frame: { duration: 50, redraw: true },
                 mode: 'immediate'
@@ -732,13 +741,14 @@ function drawgif(data) {
         };
 
         const startAnimation = () => {
+            console.log("Animation interval ID before start:", animationInterval);
             animationInterval = setInterval(animate, 200);
+            console.log("Animation interval ID after start:", animationInterval);
         };
 
         const stopAnimation = () => {
             clearInterval(animationInterval);
         };
-
 
         document.getElementById('playPauseButton').addEventListener('click', () => {
             if (isAnimating) {
@@ -750,9 +760,26 @@ function drawgif(data) {
             }
             isAnimating = !isAnimating;
         });
+        document.getElementById('3d').addEventListener('click', () => {
+            if (isAnimating) {
+                stopAnimation();
+                document.getElementById('playPauseButton').textContent = 'Play';
+                isAnimating = !isAnimating;
+
+            }
+
+            currentFrame = 0;
+        });
+        document.getElementById('heat').addEventListener('click', () => {
+            if (isAnimating) {
+                stopAnimation();
+                document.getElementById('playPauseButton').textContent = 'Play';
+                isAnimating = !isAnimating;
+            }
+
+            currentFrame = 0;
+        });
     });
-
-
 }
 
     </script>

@@ -103,10 +103,10 @@ def plot_surface(x: np.array, y: np.array, z: np.array, title: str = "", path: s
 
 if __name__ == "__main__":
     x = np.linspace(0, 1, num=1000) # should be fixed, not open for user to modify
-    v = np.genfromtxt("demo.csv", delimiter=',')    # open to user
+    v = np.sin(x)   # open to user
     u = diffusion_solver(v) # predicted solution u(x, t)
 
-    # plot surface (optional)
+    # plot surface
     x = np.linspace(0, 1, num=100)
     t = np.linspace(0, 1, num=100)
     x, t = np.meshgrid(x, t)
