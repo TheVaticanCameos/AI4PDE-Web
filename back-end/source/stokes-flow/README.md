@@ -4,7 +4,10 @@
 
 ### 数学表达
 
-本算例中求解单位正方形区域内二维含时的 Stokes 流，其数学表达形式如下：\[\begin{aligned}
+本算例中求解单位正方形区域内二维含时的 Stokes 流，其数学表达形式如下：
+
+$$
+\begin{aligned}
 \mu\left(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}\right)-\frac{\partial p}{\partial x}&=0, x\in(0, 1), y\in(0, 1)\\
 \mu\left(\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2}\right)-\frac{\partial p}{\partial y}&=0, x\in(0, 1), y\in(0, 1)\\
 \frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}&=0, x\in(0, 1), y \in (0, 1)\\
@@ -12,7 +15,10 @@ u(x, 1)=u_1(x), v(x, 1)&=0, x\in(0, 1)\\
 u(x, 0)=v(x, 0)=p(x, 0)&=0, x\in(0, 1)\\
 u(0, y)=v(0, y)&=0, y\in(0, 1)\\
 u(1, y)=v(1, y)&=0, y\in(0, 1)
-\end{aligned}\]这是一个稳态方程，描述的是稳定状态下的各个物理量，因此和时间无关。其中 $u(x, y), v(x, y)$ 为流场中的速度的 $x, y$ 分量，$p(x, y)$ 为压力场。
+\end{aligned}
+$$
+
+这是一个稳态方程，描述的是稳定状态下的各个物理量，因此和时间无关。其中 $u(x, y), v(x, y)$ 为流场中的速度的 $x, y$ 分量， $p(x, y)$ 为压力场。
 
 ### 物理意义
 
@@ -22,9 +28,9 @@ Stokes 流问题，也称为低雷诺数流动问题，描述的是在黏性力�
 
 下图是此问题的一个图示：
 
-<center>
+<div align="center">
     <img src="./demo.png" width="400" height="320"/>
-</center>
+</div>
 
 可以看到，稳态时流场会在其中心形成一个大的涡旋，角落里可能会形成小的涡旋（会根据雷诺数和流速改变而变化）。这一特定的问题也称为**方腔流问题(Cavity Flow)**。
 
@@ -52,8 +58,8 @@ if __name__ == "__main__":
 
 `infer.py` 中的第 138 - 157 行为绘图函数，用于可视化输出的流场和压强场，这里仅作为可视化的示例，作为前端绘图的参考；在实际使用时可以注释这段代码，改为在前端绘制。绘制的样例如下：
 
-<center>
+<div align="center">
     <img src="./stokes.png" width="600" height="430"/>
-</center>
+</div>
 
 其中背景颜色表示压强场，箭头图表示流速场。可以看到中心有明显的涡旋。
