@@ -6,7 +6,7 @@
 
 - 一维 Poisson 方程 [-> 文档](source/poisson1d/README.md)
 - 反应扩散方程（Diffusion-Reaction Equation） [-> 文档](source/diffusion-reaction/README.md)
-- 斯托克斯流（Stokes Flow）
+- 斯托克斯流（Stokes Flow）[-> 文档](source/stokes-flow/README.md)
 
 #### 后端代码项目结构
 
