@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDE Solver Diffusion-Reaction Equation</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PDE Solver stokes-flow</title>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css" />
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/contrib/auto-render.min.js"></script>
 
-    <link rel="icon" href="logo.ico" type="image/x-icon">
+        <link rel="icon" href="logo.png" type="image/x-icon">
 
-    <style>
+        <style>
         /* 通用样式 */
         body {
             margin: 0;
@@ -27,14 +27,6 @@
             overflow: auto;
         }
 
-        .container {
-            position: relative;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow: auto;
-        }
 
         /* 漂浮动画 */
         @keyframes float {
@@ -54,7 +46,7 @@
             display: flex;
             justify-content: space-between;
             top : 0;
-            position:absolute;
+            position:fixed;
             align-items: center;
             width: 100vw;
             padding: 20px 50px 20px 50px;
@@ -89,37 +81,42 @@
             color: #0ff;
         }
 
-        /* 介绍板块样式 */
-       .output {
+        /* 输入板块样式 */
+       .input {
             text-align: center;
             align-items: center;
             display: flex;
-            flex-direction: column;
             position: absolute;
-            top: 250px;
-            left: 10%;
-            right: 10%;
-            bottom: 100px;
+            top: 100px;
+            left: 25%;
             color: #0ff;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
             text-decoration: none;
             font-size: 20px;
-            padding:30px;
+            padding: 10px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 10px;
             transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            text-transform: uppercase;
             letter-spacing: 3px;
             display: inline-block;
-            width: 35%;
-            line-height: 30px;
-            height: 320px;
-            overflow: auto; /* 确保内容超出时可以滚动 */
-            min-height: 200px; /* 示例最小高度 */
+            width: 50%;
+            height: 800px;
+            z-index: 2;
     }
 
-    .output:hover {
+    input{
+        height: 30px;
+        border-radius: 10px;
+        font-size: 20px;
+    }
+
+    input:focus{
+        border-color: #00f2ff; /* 修改聚焦时的边框颜色 */
+        outline: none; /* 去掉默认的聚焦outline */
+    }
+
+    .input:hover {
         transform: translateY(-10px);
         box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
         background: rgba(0, 0, 0, 0.9);
@@ -132,12 +129,12 @@
     }
 
 
-    .output h2 {
+    .input h2 {
         color: #0ff;
         text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
     }
 
-    .output h3 {
+    .input h3 {
         color: #0ff;
         text-shadow: 0 0 10px rgba(100, 174, 223, 0.7);
     }
@@ -145,10 +142,10 @@
     .image-container {
         text-align: center;
         position: absolute;
-        top: 160px;
-        left: 55%;
-        right: 10%;
+        top: 950px;
+        left: 10%;
         bottom: 10%;
+        margin-bottom: 10%;
         color: #0ff;
         text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
         text-decoration: none;
@@ -161,31 +158,43 @@
         text-transform: uppercase;
         letter-spacing: 3px;
         display: inline-block;
-        width: 27%;
-        height: 500px;
-        line-height: 30px;
+        width: 75vw;
+        height: 1250px;
+        line-height: 10px;
+        z-index: 2;
+    }
+
+    .loading-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px; /* Adjust font size as needed */
+        color: #333; /* Adjust text color as needed */
     }
 
 
 
 
     /* 自定义滚动条样式 */
-    .output::-webkit-scrollbar {
+    .image-container::-webkit-scrollbar {
         width: 8px; /* 滚动条宽度 */
     }
 
-    .output::-webkit-scrollbar-track {
+    .image-container::-webkit-scrollbar-track {
         background: #34424c90; /* 滚动条轨道背景颜色 */
     }
 
-    .output::-webkit-scrollbar-thumb {
+    .image-container::-webkit-scrollbar-thumb {
         background: #32d2dd; /* 滚动条滑块背景颜色 */
         border-radius: 6px; /* 滚动条滑块圆角 */
     }
 
-    .output::-webkit-scrollbar-thumb:hover {
+    .image-container::-webkit-scrollbar-thumb:hover {
         background: #07748c; /* 滚动条滑块悬停时的背景颜色 */
     }
+
+
 
 
     /* 按钮样式 */
@@ -226,6 +235,7 @@
         width: 100%;
         bottom: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 3;
     }
 
     footer p, footer a {
@@ -240,17 +250,15 @@
         color: #0ff;
         z-index: 3;
     }
+        </style>
+    </head>
 
-</style>
+    <body>
+
+        <!-- 粒子背景 -->
+        <div id="particles-js"></div>
 
 
-</head>
-<body>
-    <!-- 粒子背景 -->
-    <div id="particles-js"></div>
-
-    <!-- 主内容容器 -->
-    <div class="container">
         <!-- 顶部导航栏 -->
         <header>
             <div class="logo">PDE Solver</div>
@@ -262,526 +270,326 @@
             </nav>
         </header>
 
-        <!-- 输入板块 -->
+
+
         <main>
-        <div class="output">
-            <h2>Diffusion-Reaction：</h2>
-            <h2> $$u_t-Du_{xx}+ku^2-v=0$$</h2>
-            <h3>请以csv或txt格式输入v的散点：</h3>
-
-            <form id="input" action="/upload" method="post" enctype="multipart/form-data">
-                <input type="file" id="file-input" accept=".csv,.txt" />
-                <br>
-                <button id="heat" type="button" onclick="uploadFileheat()">绘制热力图</button>
-                <button id="3d" type="button" onclick="uploadFile3D()">绘制3D图</button>
-                <button type="button" onclick="uploadFilegif()">绘制gif</button>
-            </form>
-
-
+        <!--输入板块-->
+        <div class= "input">
+            <h2>Stokes 流求解</h2>
+            <p>本算例中求解单位正方形区域内二维含时的 Stokes 流，其数学表达形式如下：</p>
+            <p>$$ \mu(\frac{\partial^{2}u}{\partial x^{2}}+\frac{\partial^{2}u}{\partial y^{2}})-\frac{\partial p}{\partial x}=0, x \in (0,1),y \in (0,1)$$</p>
+            <p>$$ \mu(\frac{\partial^{2}v}{\partial x^{2}}+\frac{\partial^{2}v}{\partial y^{2}})-\frac{\partial p}{\partial y}=0, x \in (0,1),y \in (0,1)$$</p>
+            <p>$$\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}=0, x \in (0,1),y \in (0,1)$$</p>
+            <p>$$u(x,1) = u_1(x), v(x,1) = 0, x \in(0,1)$$</p>
+            <p>$$u(x,0) = v(x,0) =p(x,0) = 0, x \in(0,1)$$</p>
+            <p>$$u(0,y) = v(0,y) = 0, y \in (0,1)$$</p>
+            <p>$$u(1,y) = v(1,y) = 0 ,y \in (0,1)$$</p>
+            <h3 id="input-u">请输入上边界流场流速$$u_1(x)$$</h3>
+            <input type="number" id="u1-input" placeholder="输入数值">
+            <button id="submit-button" onclick="sendDataToServer()">提交</button>
         </div>
-        <div class="image-container">
-            <h2>输出图像：</h2>
-            <div id="solutionCanvas" style="width: 95%; height: 70%;"></div>
-            <button id="playPauseButton" style="display: none;" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Play</button>
+
+        <!-- 图像展示板块 -->
+        <div class= "image-container" id= "plot1">
+            <h2>Stokes 流问题模拟向量图</h2>
+            <div id="plot" style="width: 80%; height: 85%; align-items: center; margin: auto;"></div>
         </div>
-    </main>
+        </main>
+
         <!-- 底部版权信息 -->
         <footer>
             <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
             <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
         </footer>
-    </div>
+
+
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
 
         particlesJS('particles-js', {
-    particles: {
-      number: {
-        value: 80,
-        density: {
-          enable: true,
-          value_area: 800
-        }
-      },
-      color: {
-        value: '#0ff'
-      },
-      shape: {
-        type: 'circle',
-        stroke: {
-          width: 0,
-          color: '#000000'
-        }
-      },
-      opacity: {
-        value: 0.5,
-        random: true,
-        anim: {
-          enable: false,
-          speed: 1,
-          opacity_min: 0.1,
-          sync: false
-        }
-      },
-      size: {
-        value: 3,
-        random: true,
-        anim: {
-          enable: false,
-          speed: 40,
-          size_min: 0.1,
-          sync: false
-        }
-      },
-      line_linked: {
-        enable: true,
-        distance: 150,
-        color: '#0ff',
-        opacity: 0.4,
-        width: 1
-      },
-      move: {
-        enable: true,
-        speed: 6,
-        direction: 'none',
-        random: false,
-        straight: false,
-        out_mode: 'out',
-        bounce: false,
-        attract: {
-          enable: false,
-          rotateX: 600,
-          rotateY: 1200
-        }
-      }
-    },
-    interactivity: {
-      detect_on: 'canvas',
-      events: {
-        onhover: {
-          enable: true,
-          mode: 'repulse'
-        },
-        onclick: {
-          enable: true,
-          mode: 'push'
-        },
-        resize: true
-      },
-      modes: {
-        grab: {
-          distance: 400,
-          line_linked: {
-            opacity: 1
-          }
-        },
-        bubble: {
-          distance: 400,
-          size: 40,
-          duration: 2,
-          opacity: 8,
-          speed: 3
-        },
-        repulse: {
-          distance: 200,
-          duration: 0.4
-        },
-        push: {
-          particles_nb: 4
-        },
-        remove: {
-          particles_nb: 2
-        }
-      }
-    },
-    retina_detect: true,
-    z_index: 1
-  });
-
-
-  function hidePlayPauseButton() {
-    const button = document.getElementById('playPauseButton');
-    if (button) {
-        button.style.display = 'none';
-    } else {
-        console.error('未找到ID为playPauseButton的按钮');
-    }
-}
-
-
-function showPlayPauseButton() {
-    const button = document.getElementById('playPauseButton');
-    if (button) {
-        button.style.display = 'inline-block'; // 或者 'block'，取决于你希望的显示方式
-    } else {
-        console.error('未找到ID为playPauseButton的按钮');
-    }
-}
-
-
-let animationInterval = null;
-let isAnimating = false;
-const playPauseButton = document.getElementById('playPauseButton');
-
-function stopAnimation() {
-    clearInterval(animationInterval);
-    isAnimating = false;
-    playPauseButton.textContent = 'Play';
-}
-
-function refreshCanvas() {
-    Plotly.purge('solutionCanvas');  // 清除旧图表
-    stopAnimation();  // 确保动画已停止
-}
-
-
-
-  // 上传文件
-async function uploadFileheat() {
-    hidePlayPauseButton();
-    refreshCanvas();
-    const fileInput = document.getElementById('file-input');
-    const file = fileInput.files[0];
-    if (!file) {
-        alert('请选择一个文件');
-        return;
-    }
-    if (!file.name.endsWith('.csv') && !file.name.endsWith('.txt')) {
-        alert('请选择一个文件');
-        return;
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-        });
-        if (!response.ok) {
-            throw new Error('网络响应失败');
-        }
-        const data = await response.json();
-        console.log('文件上传成功:', data);
-        Plotly.purge('solutionCanvas');
-        drawHeatmap(data);
-    } catch (error) {
-        console.error('文件上传失败:', error);
-    }
-}
-
-async function uploadFile3D() {
-    hidePlayPauseButton();
-    refreshCanvas();
-
-    const fileInput = document.getElementById('file-input');
-    const file = fileInput.files[0];
-    if (!file) {
-        alert('请选择一个文件');
-        return;
-    }
-    if (!file.name.endsWith('.csv') && !file.name.endsWith('.txt')) {
-        alert('请选择一个文件');
-        return;
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-        });
-        if (!response.ok) {
-            throw new Error('网络响应失败');
-        }
-        const data = await response.json();
-        console.log('文件上传成功:', data);
-        Plotly.purge('solutionCanvas');
-        draw3D(data);
-    } catch (error) {
-        console.error('文件上传失败:', error);
-    }
-}
-async function uploadFilegif(){
-    showPlayPauseButton();
-    refreshCanvas();
-    currentFrame = 0;
-    isAnimating = false;
-    if (animationInterval) {
-        clearInterval(animationInterval); // 清除现有定时器
-    }
-
-    const fileInput = document.getElementById('file-input');
-    const file = fileInput.files[0];
-    if (!file) {
-        alert('请选择一个文件');
-        return;
-    }
-    if (!file.name.endsWith('.csv') && !file.name.endsWith('.txt')) {
-        alert('请选择一个文件');
-        return;
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-        });
-        if (!response.ok) {
-            throw new Error('网络响应失败');
-        }
-        const data = await response.json();
-        console.log('文件上传成功:', data);
-        Plotly.purge('solutionCanvas');
-        drawgif(data);
-    } catch (error) {
-        console.error('文件上传失败:', error);
-    }
-
-}
-
-
-//画图函数
-function drawHeatmap(data) {
-    refreshCanvas();
-
-    // 打印输入数据的数据类型
-    console.log('输入数据的数据类型:', typeof data);
-    console.log('输入数据是否为数组:', Array.isArray(data));
-
-    // 如果数据类型为对象，则转换为二维数组
-    if (typeof data === 'object' && !Array.isArray(data)) {
-        data = Object.values(data);
-        console.log('转换后的数据:', data);
-    }
-
-    // 确保输入数据是一个二维数组
-    if (!Array.isArray(data) || !data.every(Array.isArray)) {
-        console.error('输入数据必须是一个二维数组');
-        return;
-    } else {
-        console.log('成功输入');
-    }
-
-    const zmin = Math.min(...data.flat().flat());
-    const zmax = Math.max(...data.flat().flat());
-    console.log('数据:', zmin, '和', zmax, '和', data.flat(), '和', data);
-
-    // 创建从 0 到 100 的整数数组
-    const xValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100); // 生成 0 到 100 的整数
-    const yValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100); // 生成 0 到 100 的整数
-
-    const trace = {
-        x: xValues,
-        y: yValues,
-        z: data.flat(),
-        type: 'heatmap',
-        colorscale: 'Viridis', // 可以选择你喜欢的颜色刻度
-        colorbar: {
-            title: '值',
-            tickvals: [zmin, (zmin + zmax) / 2, zmax], // 调整刻度值
-            ticktext: [zmin.toFixed(2), ((zmin + zmax) / 2).toFixed(2), zmax.toFixed(2)] // 显示的标签
-        },
-        zmin: zmin,
-        zmax: zmax,
-        hovertemplate: 'T(s): %{y:.2f}<br>X(m): %{x:.2f}<br>U(m/s): %{z:.2f}<extra></extra>', // 自定义鼠标悬停显示
-    };
-
-    const layout = {
-        title: '热力图',
-        xaxis: {
-            title: 'x(m)',
-        },
-        yaxis: {
-            title: 't(s)',
-        },
-        zaxis: {
-            title: 'u(x,t) (m/s)',
-        }
-    };
-
-
-    Plotly.newPlot('solutionCanvas', [trace], layout)
-        .then(() => console.log('热力图绘制成功'))
-        .catch(error => console.error('绘制热力图时出错:', error));
-}
-
-function draw3D(data) {
-    refreshCanvas();
-
-    // 打印输入数据的数据类型
-    console.log('输入数据的数据类型:', typeof data);
-    console.log('输入数据是否为数组:', Array.isArray(data));
-
-    // 如果数据类型为对象，则转换为二维数组
-    if (typeof data === 'object' && !Array.isArray(data)) {
-        data = Object.values(data);
-        console.log('转换后的数据:', data);
-    }
-
-    // 确保输入数据是一个二维数组
-    if (!Array.isArray(data) || !data.every(Array.isArray)) {
-        console.error('输入数据必须是一个二维数组');
-        return;
-    } else {
-        console.log('成功输入');
-    }
-
-    const zmin = Math.min(...data.flat().flat());
-    const zmax = Math.max(...data.flat().flat());
-    console.log('数据:', zmin, '和', zmax, '和', data.flat(), '和', data);
-
-    // 创建从 0 到 100 的整数数组
-    const xValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100); // 生成 0 到 100 的整数
-    const yValues = Array.from({ length: 101 }, (_, i) => i).map(val => val / 100);
-
-    const trace = {
-        x: xValues,
-        y: yValues,
-        z: data.flat(),
-        type: 'surface',
-        colorscale: 'Viridis',
-        cmin: zmin,
-        cmax: zmax,
-        hovertemplate: 'T(s): %{y:.2f}<br>X(m): %{x:.2f}<br>U(m/s): %{z:.2f}<extra></extra>',
-        // 自定义鼠标悬停显示
-        colorbar: {
-            title: '值',
-            tickvals: [zmin, (zmin + zmax) / 2, zmax], // 调整刻度值
-            ticktext: [zmin.toFixed(2), ((zmin + zmax) / 2).toFixed(2), zmax.toFixed(2)] // 显示的标签
-        }
-    };
-
-    const layout = {
-        title: '3D图',
-        scene: {
-            xaxis: {
-                title: 'x(m)',
+            particles: {
+            number: {
+                value: 80,
+                density: {
+                enable: true,
+                value_area: 800
+                }
             },
-            yaxis: {
-                title: 't(s)',
+            color: {
+                value: '#0ff'
             },
-            zaxis: {
-                title: 'u(x,t) (m/s)',
+            shape: {
+                type: 'circle',
+                stroke: {
+                width: 0,
+                color: '#000000'
+                }
+            },
+            opacity: {
+                value: 0.5,
+                random: true,
+                anim: {
+                enable: false,
+                speed: 1,
+                opacity_min: 0.1,
+                sync: false
+                }
+            },
+            size: {
+                value: 3,
+                random: true,
+                anim: {
+                enable: false,
+                speed: 40,
+                size_min: 0.1,
+                sync: false
+                }
+            },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: '#0ff',
+                opacity: 0.4,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 6,
+                direction: 'none',
+                random: false,
+                straight: false,
+                out_mode: 'out',
+                bounce: false,
+                attract: {
+                enable: false,
+                rotateX: 600,
+                rotateY: 1200
+                }
             }
+            },
+            interactivity: {
+            detect_on: 'canvas',
+            events: {
+                onhover: {
+                enable: true,
+                mode: 'repulse'
+                },
+                onclick: {
+                enable: true,
+                mode: 'push'
+                },
+                resize: true
+            },
+            modes: {
+                grab: {
+                distance: 400,
+                line_linked: {
+                    opacity: 1
+                }
+                },
+                bubble: {
+                distance: 400,
+                size: 40,
+                duration: 2,
+                opacity: 8,
+                speed: 3
+                },
+                repulse: {
+                distance: 200,
+                duration: 0.4
+                },
+                push: {
+                particles_nb: 4
+                },
+                remove: {
+                particles_nb: 2
+                }
+            }
+            },
+            retina_detect: true,
+            z_index: 1
+        });
+
+
+        // 输入板块
+        const input = document.getElementById("input");
+        const u1Input = document.getElementById("u1-input");
+        const submitButton = document.getElementById("submit-button");
+        const imageContainer = document.getElementById("image-container");
+
+        function sendDataToServer() {
+            let inputValue = document.getElementById('u1-input').value;  // 获取输入框的值
+            console.log('成功提交数据');
+
+            // Clear previous plot
+            document.getElementById('plot1').innerHTML = '';
+
+            // Create and display loading message
+            const loadingMessage = document.createElement('h2');
+            loadingMessage.className = 'loading-message';
+            loadingMessage.innerHTML = '请耐心等待5-10秒';
+            document.getElementById('plot1').appendChild(loadingMessage);
+
+            // Send request to server
+            fetch('/stokes_flow', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ input_value: inputValue })  // 将输入值作为JSON发送
+            })
+            .then(response => response.json())
+            .then(data => {
+                const result = data.result;  // 后端返回的101*101*3数组
+                loadingMessage.remove();
+                // Draw plot
+                drawPlot(result);  // 绘制向量图
+
+                // Remove loading message after drawing
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Optionally, you may want to remove the loading message if an error occurs
+                loadingMessage.remove();
+            });
         }
-    };
 
-    Plotly.newPlot('solutionCanvas', [trace], layout)
-        .then(() => console.log('三维立体图绘制成功'))
-        .catch(error => console.error('绘制三维立体图时出错:', error));
-}
-function drawgif(data) {
-    refreshCanvas();
 
-    // 打印输入数据的数据类型
-    console.log('输入数据的数据类型:', typeof data);
-    console.log('输入数据是否为数组:', Array.isArray(data));
 
-    // 如果数据类型为对象，则转换为二维数组
-    if (typeof data === 'object' && !Array.isArray(data)) {
-        data = Object.values(data);
-        console.log('转换后的数据:', data);
-    }
+        // 绘制向量图
+        function drawPlot(result) {
+            console.log('输入数据的数据类型:', typeof result);
+            console.log('输入数据是否为数组:', Array.isArray(result));
 
-    // 确保输入数据是一个二维数组
-    if (!Array.isArray(data) || !data.every(Array.isArray)) {
-        console.error('输入数据必须是一个二维数组');
-        return;
-    } else {
-        console.log('成功输入');
-    }
+            const n = 101;  // 数据大小101x101
+            const u = result.map(row => row.map(cell => cell[0]));  // X方向速度场
+            const v = result.map(row => row.map(cell => cell[1]));  // Y方向速度场
+            const p = result.map(row => row.map(cell => cell[2]));  // 压力场
 
-    // 缩小 X 值一百倍
-    const scaleFactor = 100;
-    const frames = data.flat().map((row, i) => ({
-        name: `Frame ${i}`,
-        data: [{ x: Array.from(Array(row.length).keys()).map(x => x / scaleFactor), y: row, type: 'scatter' }]
-    }));
+            // x和y坐标
+            const x = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => j));
+            const y = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => i));
 
-    const initialData = [{ x: Array.from(Array(data[0].length).keys()).map(x => x / scaleFactor), y: data.flat()[0], type: 'scatter' }];
+            // Flatten arrays for Plotly
+            const xFlat = [].concat(...x);
+            const yFlat = [].concat(...y);
+            const pFlat = [].concat(...p);
 
-    const zmin = Math.min(...data.flat().flat());
-    const zmax = Math.max(...data.flat().flat());
+            // Create the contour plot for pressure field
+            const pressureTrace = {
+                z: p,
+                type: 'contour',
+                colorscale: 'Viridis',
+                showscale: true,
+                name: 'Pressure Field',
+                showlegend: false,
+                hovertemplate: 'Pressure: %{z}Pa<br>Vx: 0.%{x}m/s<br>Vy: 0.%{y}m/s<extra></extra>', // Show pressure value and coordinates
+            };
 
-    // Adjust the layout to set x and y axis ranges
-    const layout = {
-        title: '放慢20倍的gif(点击play开始播放)',
-        xaxis: {
-            title: 'X(m)',
-            range: [0, data[0].length / scaleFactor ]
-        },
-        yaxis: {
-            title: 'U(m/s)',
-            range: [zmin-0.1, zmax+0.1] // Use calculated min and max values
-        }
-    };
+            // Arrow data for velocity field
+            const arrowData = [];
+            const arrowHeadLength = 1;  // Increased arrow head length
+            const arrowScale = 5.0;  // Scale factor for arrow length
+            const angle = Math.PI / 6;  // 箭头角度
 
-    Plotly.newPlot('solutionCanvas', initialData, layout).then(() => {
-        let currentFrame = 0;
-        let isAnimating = false;
-        let animationInterval;
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    const startX = i;
+                    const startY = j;
+                    const endX = i + u[i][j] * arrowScale*20;  // Scale for visualization
+                    const endY = j + v[i][j] * arrowScale*20;
+                    if (i % 5 === 0 && j % 5 === 0) {
+                    // 向量的线条
+                        arrowData.push({
+                            type: 'scatter',
+                            mode: 'lines',
+                            x: [startX, endX],
+                            y: [startY, endY],
+                            line: { color: 'black', width: 0.5 },  // Increased line width
+                            showlegend: false,
+                            hoverinfo: 'none',
+                        });
 
-        const animate = () => {
-                Plotly.animate('solutionCanvas', frames[currentFrame], {
-                transition: { duration: 50 },
-                frame: { duration: 50, redraw: true },
-                mode: 'immediate'
+                        // 箭头部分
+                        const headX1 = endX - arrowHeadLength * Math.cos(Math.atan2(v[i][j], u[i][j]) - angle);
+                        const headY1 = endY - arrowHeadLength * Math.sin(Math.atan2(v[i][j], u[i][j]) - angle);
+                        const headX2 = endX - arrowHeadLength * Math.cos(Math.atan2(v[i][j], u[i][j]) + angle);
+                        const headY2 = endY - arrowHeadLength * Math.sin(Math.atan2(v[i][j], u[i][j]) + angle);
+
+                        // Create the arrowhead lines
+                        arrowData.push({
+                            type: 'scatter',
+                            mode: 'lines',
+                            x: [endX, headX1],
+                            y: [endY, headY1],
+                            line: { color: 'black', width: 0.5 },  // Increased line width
+                            showlegend: false,
+                            hoverinfo: 'none',
+                        });
+
+                        arrowData.push({
+                            type: 'scatter',
+                            mode: 'lines',
+                            x: [endX, headX2],
+                            y: [endY, headY2],
+                            line: { color: 'black', width: 0.5 },  // Increased line width
+                            showlegend: false,
+                            hoverinfo: 'none',
+                        });
+                    }
+                }
+            }
+
+            const polydata = [pressureTrace, ...arrowData];
+
+            const layout = {
+                title: '向量图',
+                xaxis: {
+                    title: 'Vx',
+                    tickvals: [0, 20, 40, 60, 80, 100],
+                    ticktext: [0,0.2,0.4,0.6,0.8,1],  // 设置刻度文本
+                },
+                yaxis: {
+                    title: 'Vy',
+                    tickvals: [0, 20, 40, 60, 80, 100],
+                    ticktext: [0,0.2,0.4,0.6,0.8,1],
+                },
+                showlegend: false,
+            };
+
+            const plotDiv = document.getElementById('plot');
+            plotDiv.on('plotly_hover', function(eventData) {
+                if (eventData.points.length) {
+                    const point = eventData.points[0];
+                    const hoverInfo = `Pressure: ${point.z}<br>x: ${point.x}<br>y: ${point.y}`;
+                    Plotly.Fx.hover(plotDiv, eventData.event, hoverInfo);
+                }
             });
 
-            currentFrame++;
-            if (currentFrame >= frames.length) {
-                currentFrame = 0; // Reset to the first frame
-            }
-        };
+            plotDiv.on('plotly_unhover', function() {
+                Plotly.Fx.hover(plotDiv, null);  // 清除悬停信息
+            });
+        }
 
-        const startAnimation = () => {
-            console.log("Animation interval ID before start:", animationInterval);
-            animationInterval = setInterval(animate, 200);
-            console.log("Animation interval ID after start:", animationInterval);
-        };
 
-        const stopAnimation = () => {
-            clearInterval(animationInterval);
-        };
 
-        document.getElementById('playPauseButton').addEventListener('click', () => {
-            if (isAnimating) {
-                stopAnimation();
-                document.getElementById('playPauseButton').textContent = 'Play';
-            } else {
-                startAnimation();
-                document.getElementById('playPauseButton').textContent = 'Pause';
-            }
-            isAnimating = !isAnimating;
+
+        // 数学公式渲染
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "\\[", right: "\\]", display: true},
+                {left: "$", right: "$", display: false},
+                {left: "\\(", right: "\\)", display: false}
+            ]
+            });
         });
-        document.getElementById('3d').addEventListener('click', () => {
-            if (isAnimating) {
-                stopAnimation();
-                document.getElementById('playPauseButton').textContent = 'Play';
-                isAnimating = !isAnimating;
 
-            }
-
-            currentFrame = 0;
-        });
-        document.getElementById('heat').addEventListener('click', () => {
-            if (isAnimating) {
-                stopAnimation();
-                document.getElementById('playPauseButton').textContent = 'Play';
-                isAnimating = !isAnimating;
-            }
-
-            currentFrame = 0;
-        });
-    });
-}
 
     </script>
-</body>
+    </body> 
 </html>
