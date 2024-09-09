@@ -28,15 +28,6 @@
             overflow: auto;
         }
 
-        .container {
-            position: relative;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow: scroll;
-        }
-
         /* 漂浮动画 */
         @keyframes float {
             0% {
@@ -97,9 +88,8 @@
             display: flex;
             flex-direction: column;
             position: absolute;
-            top: 200px;
+            top: 150px;
             left: 10%;
-            right: 20px;
             bottom: 10%;
             color: #0ff;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
@@ -110,13 +100,13 @@
             border-radius: 10px;
             transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            text-transform: uppercase;
             letter-spacing: 3px;
             display: inline-block;
             width: 35%;
             line-height: 30px;
-            height: auto;
+            height: 610px;
             overflow: auto; /* 确保内容超出时可以滚动 */
+            z-index: 2;
         }
 
         .introduction h2 {
@@ -189,13 +179,13 @@
             border-radius: 10px;
             transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            text-transform: uppercase;
             letter-spacing: 3px;
             display: inline-block;
             width: 35%;
             height: 500px;
             line-height: 30px;
             overflow: scroll;
+            z-index: 2;
         }
 
         .slider-container {
@@ -324,8 +314,6 @@
     <!-- 粒子背景 -->
     <div id="particles-js"></div>
 
-    <!-- 主内容容器 -->
-    <div class="container">
         <!-- 顶部导航栏 -->
         <header>
             <div class="logo">PDE Solver</div>
@@ -368,7 +356,7 @@
             <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
             <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
         </footer>
-    </div>
+
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
