@@ -305,12 +305,39 @@
             color: #0ff;
             z-index: 3;
         }
+        table {
+            width: 100%; /* Set the table width to 80% of the parent container */
+            max-width: 600px; /* Optional: Set a maximum width */
+            border-collapse: collapse;
+            margin: auto; /* Center the table */
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            width: 50%;
+        }
+        input {
+            width: 10%;
+            padding: 4px;
+            border-radius: 0;
+            background-color: #1a1a1a;
+            color:#ccc
+        }
+        .coefficient-input {
+            width: 100%;
+            border-radius: 0;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
 
 </style>
 
 
 </head>
-<body>
+<body class="p-4">
     <!-- 粒子背景 -->
     <div id="particles-js"></div>
 
@@ -325,18 +352,34 @@
             </nav>
         </header>
 
-        
+
         <!-- 输入板块 -->
         <div class="introduction">
             <h2>Poisson：u''(x)=f(x)</h2>
-            <h3 id="sliderValues"> </h3>
-            <p>请输入方程的各项系数：</p>
+            <h2 class="mt-4 text-lg font-bold">多项式表达式:</h2>
+            <div id="polynomialDisplay" class="border p-2"></div>
+            <div id="errorDisplay" class="error"></div>
 
-            <div>  
-                <button onclick="addSlider()">增加x的幂数</button>   
-            </div>  
-    
-            <div id="sliders"></div>  
+
+            <div>
+                <button id="addRowBtn" class="bg-blue-500 text-white px-4 py-2 rounded">增加行</button>
+                <table class="mt-4">
+                    <thead>
+                        <tr>
+                            <th>x的幂次</th>
+                            <th>x的系数</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td><input type="number" placeholder="幂次" class="border p-1" /></td>
+                            <td><input type="number" placeholder="系数" class="border p-1 coefficient-input" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="sliders"></div>
             <button onclick="sendData()">发送数据</button>
 
             <p>输入 x 值 (0 ≤ x ≤ 1):</p>
@@ -344,18 +387,13 @@
             <button onclick="sendData()">计算u(x)</button>
             <p id="result"></p>
 
-        </div>  
+        </div>
         <!-- 输出板块 -->
         <div class="image-container">
             <h2>输出图像：</h2>
             <div id="solutionCanvas" style="width: 100%; height: 80%;"></div>
         </div>
 
-        <!-- 底部版权信息 -->
-        <footer>
-            <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
-            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-        </footer>
 
 
     <!-- JavaScript -->
@@ -465,129 +503,126 @@
     z_index: 1
   });
 
-
-
-
-// 页面加载完成后，调用 addSlider 函数渲染 x^0
-document.addEventListener("DOMContentLoaded", function() {
-    sliderCount = -1; // 初始化为 -1，这样 addSlider 调用后，sliderCount 为 0
-    addSlider(); // 首次加载时调用，渲染 x^0
-});
-
-function addSlider() {
-sliderCount++;
-
-// 创建一个新的滑块
-var sliderContainer = document.createElement('div');
-sliderContainer.className = 'slider-container';
-sliderContainer.style.marginBottom = '20px';
-
-var titleLabel = document.createElement('label');
- // 这里使用 KaTeX 渲染公式
- titleLabel.innerHTML = `x^${sliderCount}`;
- titleLabel.className = 'latex-equation'; // 为标签添加一个特定的类名
-
-
-// 创建输入框
-var minInput = document.createElement('input');
-minInput.type = 'number';
-minInput.placeholder = '最小值';
-minInput.value = 1;
-
-// 创建输出值文本
-var sliderValue = document.createElement('span');
-sliderValue.className = 'output';
-sliderValue.innerText = minInput.value; // 默认输出为最小值
-
-// 添加元素
-sliderContainer.appendChild(titleLabel);
-sliderContainer.appendChild(minInput);
-sliderContainer.appendChild(sliderValue);
-
-sliderValue.style.display = 'none';
-
 // 更新滑块值和展示内容
 function updateRange() {
-var minValue = parseInt(minInput.value);
+    var minValue = parseInt(minInput.value);
 
 
-sliderValue.innerText = minValue;  // 可以根据其他逻辑调整具体输出值
-updateSliderValuesDisplay(); // 更新<h3>的值
-}
+    sliderValue.innerText = minValue;  // 可以根据其他逻辑调整具体输出值
+    updateSliderValuesDisplay(); // 更新<h3>的值
+    }
 
-function updateSliderValuesDisplay() {
-const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {
-    const power = index; // 当前滑块的幂数
-    const coefficient = parseInt(span.innerText);
 
-    if (isNaN(coefficient)) {
-            return ''; // 如果系数解析失败，返回空字符串
+        function updatePolynomialDisplay() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            let polynomial = '';
+
+            rows.forEach(row => {
+                const power = row.cells[0].querySelector('input').value;
+                const coefficient = row.cells[1].querySelector('input').value;
+
+                if (coefficient && power) {
+                    if (polynomial) {
+                        polynomial += ' + ';
+                    }
+                    polynomial += `${coefficient}x^${power}`;
+                }
+            });
+
+            document.getElementById('polynomialDisplay').innerText = polynomial || '无多项式';
         }
 
-    // 如果系数为1且幂次不为0，则省略系数
-    if (coefficient === 1 && power !== 0) {
-        return `x^${power}`;
-    } else if (power === 0) {
-        return `${coefficient}`; // x^0时保留系数
-    } else if (coefficient === 0) {
-        return ''; // 如果系数为0，不显示这项
-    } else if (coefficient === -1 && power !== 0) {
-        return `-x^${power}`;// 系数为-1且幂次不为0时，只显示负号
-    } else {
-        return `${coefficient}x^${power}`;
-    }
-});
+        function checkUniquePowers() {
+            const powers = [];
+            const rows = document.querySelectorAll('#tableBody tr');
+
+            rows.forEach(row => {
+                const power = row.cells[0].querySelector('input').value;
+                if (power) {
+                    powers.push(power);
+                }
+            });
+
+            const uniquePowers = new Set(powers);
+            if (uniquePowers.size !== powers.length) {
+                document.getElementById('errorDisplay').innerText = '幂次不能重复！';
+                return false;
+            } else {
+                document.getElementById('errorDisplay').innerText = '';
+                return true;
+            }
+        }
+
+        document.getElementById('addRowBtn').addEventListener('click', function() {
+            // 创建新的行
+            var newRow = document.createElement('tr');
+
+            // 创建第一列
+            var newCell1 = document.createElement('td');
+            var newInput1 = document.createElement('input');
+            newInput1.type = 'number';
+            newInput1.placeholder = '幂次';
+            newInput1.className = 'border p-1';
+            newInput1.addEventListener('input', function() {
+                if (checkUniquePowers()) {
+                    updatePolynomialDisplay();
+                }
+            });
+            newCell1.appendChild(newInput1);
+            newRow.appendChild(newCell1);
+
+            // 创建第二列
+            var newCell2 = document.createElement('td');
+            var newInput2 = document.createElement('input');
+            newInput2.type = 'number';
+            newInput2.placeholder = '系数';
+            newInput2.className = 'border p-1';
+            newInput2.addEventListener('input', function() {
+                if (checkUniquePowers()) {
+                    updatePolynomialDisplay();
+                }
+            });
+            newCell2.appendChild(newInput2);
+            newRow.appendChild(newCell2);
+
+            // 将新行添加到表格主体
+            document.getElementById('tableBody').appendChild(newRow);
+            updatePolynomialDisplay(); // Update polynomial display after adding a new row
+        });
+
+        // Initial display update
+        document.querySelectorAll('#tableBody tr input').forEach(input => {
+            input.addEventListener('input', function() {
+                if (checkUniquePowers()) {
+                    updatePolynomialDisplay();
+                }
+            });
+        });
 
 
-// 合并非空项，并确保没有多余的加号
-let fxExpression = '';
-for (let i = 0; i < sliderValues.length; i++) {
-    if (i === 0) {
-        fxExpression += sliderValues[i];
-    } else if (sliderValues[i].startsWith('-')) {
-        fxExpression += ` ${sliderValues[i]}`;
-    } else if (sliderValues[i]==='') {
-        fxExpression += `${sliderValues[i]}`;
-    } else {
-        fxExpression += ` + ${sliderValues[i]}`;
-    }
-}
-
-// 将多项式值显示在 <h3> 中
-const fxElement = document.getElementById('sliderValues');
-katex.render(`当前f(x) = ${fxExpression}`, fxElement);
-
-}
-
-// 添加输入框事件处理
-minInput.addEventListener('input', updateRange);
-// 将新的滑块容器添加到页面
-document.getElementById('sliders').appendChild(sliderContainer);
-
-updateRange();
 
 
-// 使用 KaTeX 渲染滑块前的公式
-katex.render(`x^${sliderCount}`, titleLabel);
-}
+async function sendData() {
+    const rows = document.querySelectorAll('#tableBody tr');
+    const polynomialData = Array.from(rows).map(row => {
+        const power = row.cells[0].querySelector('input').value;
+        const coefficient = row.cells[1].querySelector('input').value;
 
+        // Only include entries with valid power and coefficient
+        if (power && coefficient) {
+            return { power: parseInt(power), value: parseFloat(coefficient) };
+        }
+    }).filter(Boolean); // Filter out any undefined values
 
-
- async function sendData() {
-    const sliderValues = Array.from(document.querySelectorAll('.output')).map((span, index) => {
-        return {power: index, value: parseFloat(span.innerText)};
-    });
+    console.log(polynomialData); // Log the resulting array of objects
 
     await fetch('/solve', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(sliderValues),
+        body: JSON.stringify(polynomialData),
     })
-
-    
-
     .then(response => response.json())
     .then(data => {
         calculateUx(data);
@@ -596,7 +631,7 @@ katex.render(`x^${sliderCount}`, titleLabel);
     .then(data => {
         drawSolution(data);
     })
-    
+
     .catch((error) => {
         console.error('Error:', error);
     });
@@ -639,7 +674,7 @@ function drawSolution(data) {
     Plotly.newPlot('solutionCanvas', plotlyData, plotlyLayout);
 }
 
-        function calculateUx(data) {
+function calculateUx(data) {
 
             // 对 xValues 和 yValues 进行排序，确保对应关系不变
     const sortedData = data.x.map((x, i) => ({ x: x, y: data.y[i] }))
@@ -648,7 +683,7 @@ function drawSolution(data) {
     const yValues = sortedData.map(item => item.y);
 
             const userX = parseFloat(document.getElementById('x-input').value);
-            
+
              // 找到离 userX 最近的两个自变量值及其对应的 y 值
             let x1 = null, x2 = null, y1 = null, y2 = null;
             for (let i = 0; i < xValues.length - 1; i++) {
@@ -672,11 +707,10 @@ function drawSolution(data) {
                 katex.render(`u(x)=Error`, resultElement);
             }
         }
-    
+
 
 //让 introduction 板块的长度随着滑块个数的增加而变长
 const sliderContainer = document.getElementById('slider-container');
-const sliders = sliderContainer.getElementsByClassName('slider');
 const introduction = document.querySelector('.introduction');
 
 // 定义一个函数来更新 introduction 的高度
