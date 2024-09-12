@@ -7,7 +7,7 @@
 本算例求解一维对流方程（Advection Equation），其表达式如下
 
 $$
-\frac{\partial u}{\partial t} + c\cdot\frac{\partial u}{\partial x}=0 \tag{(1)}
+\frac{\partial u}{\partial t} + c\cdot\frac{\partial u}{\partial x}=0 \tag{1}
 $$
 
 其中 $u(x,t)$ 为待求解的函数，$c$ 为常数，$x$ 为空间坐标，$t$ 为时间坐标。
