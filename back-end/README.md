@@ -7,17 +7,20 @@
 - 一维 Poisson 方程 [-> 文档](source/poisson1d/README.md)
 - 反应扩散方程（Diffusion-Reaction Equation） [-> 文档](source/diffusion-reaction/README.md)
 - 斯托克斯流（Stokes Flow）[-> 文档](source/stokes-flow/README.md)
+- 对流方程（Advection Equation）[-> 文档](source/advection/README.md)
 
 #### 后端代码项目结构
 
 ```
 back-end/
 |--params/                              // 预训练好的网络参数
+|   |--advection-params.ckpt-50000.pt   // 对流方程的网络参数
 |   |--dr-params.ckpt-20000.pt          // 反应扩散方程的网络参数
 |   |--poisson1d-params.ckpt-1000.pt    // 一维 Poisson 方程的网络参数
 |   |--stokes-params-50000.pt           // Stokes 流的网络参数
 |--source/                              // Python 代码
 |   |--dataset/                         // 训练用数据集
+|   |--advection/                       // 对流方程
 |   |--diffusion-reaction/              // 反应扩散方程
 |   |--poisson1d/                       // 一维 Poisson 方程
 |   |--stokes-flow/                     // Stokes 流
