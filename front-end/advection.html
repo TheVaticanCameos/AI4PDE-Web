@@ -88,7 +88,7 @@
             display: flex;
             flex-direction: column;
             position: absolute;
-            top: 170px;
+            top: 165px;
             left: 10%;
             right: 10%;
             bottom: 100px;
@@ -105,7 +105,7 @@
             display: inline-block;
             width: 35%;
             line-height: 30px;
-            height: 450px;
+            height: 510px;
             overflow: auto; /* 确保内容超出时可以滚动 */
             min-height: 200px; /* 示例最小高度 */
             z-index: 2;
@@ -141,7 +141,7 @@
     .image-container {
         text-align: center;
         position: absolute;
-        top: 160px;
+        top: 165px;
         left: 55%;
         right: 10%;
         bottom: 10%;
@@ -157,7 +157,7 @@
         letter-spacing: 3px;
         display: inline-block;
         width: 27%;
-        height: 500px;
+        height: 510px;
         line-height: 30px;
         z-index: 2;
     }
@@ -309,7 +309,7 @@
         <h2> $$\frac{\partial u}{\partial t} + c\cdot \frac{\partial u}{\partial x} = 0 $$</h2>
         <p>其中u(x,t)为待求解的函数，c为常数， x为空间坐标， t为时间坐标(本例中c = 1)。</p>     
         
-        <h3>请以csv或txt格式输入v的散点：</h3>
+        <h3>请以csv或txt格式输入散点u(x,0)：</h3>
 
         <form id="input" action="/upload" method="post" enctype="multipart/form-data">
             <input type="file" id="file-input" accept=".csv,.txt" />
