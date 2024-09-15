@@ -27,6 +27,7 @@
             overflow: auto;
         }
 
+
         /* 漂浮动画 */
         @keyframes float {
             0% {
@@ -196,6 +197,52 @@
         background-color: #97c6ce;
     }
 
+
+
+    /*帮助板块样式*/
+    .help {
+            text-align: center;
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 850px;
+            left: 10%;
+            bottom: 20%;
+            margin-bottom: 10%;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 20px;
+            padding:10px 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            letter-spacing: 3px;
+            display: inline-block;
+            width: 80%;
+            line-height: 20px;
+            height: 650px;
+            overflow: auto; /* 确保内容超出时可以滚动 */
+            z-index: 2;
+        }
+
+        .help h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        .help-content {
+            text-align: left;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
     /* 粒子背景 */
     #particles-js {
         position: fixed;
@@ -240,45 +287,70 @@
     <!-- 粒子背景 -->
     <div id="particles-js"></div>
 
-        <!-- 顶部导航栏 -->
-        <header>
-            <div class="logo">PDE Solver</div>
-            <nav>
-                <a href="menu.html">Home</a>
-                <a href="#">About Us</a>
-                <a href="#">Help</a>
-                <a href="#">Contact</a>
-            </nav>
-        </header>
+    <!-- 顶部导航栏 -->
+    <header>
+        <div class="logo">PDE Solver</div>
+        <nav>
+            <a href="menu.html">Home</a>
+            <a href="#">About Us</a>
+            <a href="#">Help</a>
+        </nav>
+    </header>
 
-        <!-- 输入板块 -->
-        <main>
-        <div class="output">
-            <h2>Diffusion-Reaction：</h2>
-            <h2> $$u_t-Du_{xx}+ku^2-v=0$$</h2>
-            <h3>请以csv或txt格式输入v的散点：</h3>
+    <!-- 输入板块 -->
+    <div class="output">
+        <h2>Diffusion-Reaction：</h2>
+        <h2> $$u_t-Du_{xx}+ku^2-v=0$$</h2>
+        <h3>请以csv或txt格式输入v的散点：</h3>
 
-            <form id="input" action="/upload" method="post" enctype="multipart/form-data">
-                <input type="file" id="file-input" accept=".csv,.txt" />
-                <br>
-                <button id="heat" type="button" onclick="uploadFileheat()">绘制热力图</button>
-                <button id="3d" type="button" onclick="uploadFile3D()">绘制3D图</button>
-                <button type="button" onclick="uploadFilegif()">绘制gif</button>
-            </form>
+        <form id="input" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" id="file-input" accept=".csv,.txt" />
+            <br>
+            <button id="heat" type="button" onclick="uploadFileheat()">绘制热力图</button>
+            <button id="3d" type="button" onclick="uploadFile3D()">绘制3D图</button>
+            <button type="button" onclick="uploadFilegif()">绘制gif</button>
+        </form>
 
 
+    </div>
+    <div class="image-container">
+        <h2>输出图像：</h2>
+        <div id="solutionCanvas" style="width: 95%; height: 70%;"></div>
+        <button id="playPauseButton" style="display: none;" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Play</button>
+    </div>
+
+    <!--使用手册-->
+
+    <div class="help">
+        <h2>需要帮助？请阅读以下内容</h2>
+
+        <div class="help-content">
+            <h3>1. 输入多项式表达式</h3>
+            <p>在输入框中输入多项式表达式，如：2x^3 + 3x^2 - 5x + 2。</p>
+            <p>支持的运算符有：+</p>
+            <p>支持的变量有：x</p>
+            <p>支持的幂次范围为：0 ≤ x ≤ 1。</p>
+            <p>如：2x^3 + 3x^2 - 5x + 2</p>
+            <h3>2. 增加行</h3>
+            <p>点击“增加行”按钮，可以增加多项式的行。</p>
+            <h3>3. 输入 x 值</h3>
+            <p>输入 x 值 (0 ≤ x ≤ 1)，点击“计算u(x)”按钮，可以计算多项式在 x 处的值。</p>
+            <h3>4. 输出图像</h3>
+            <p>点击“输出图像”按钮，可以绘制多项式在 x 轴上的图像。</p>
+            <h3>5. 发送数据</h3>
+            <p>点击“发送数据”按钮，可以将多项式的系数和幂次发送至服务器，由服务器计算并返回多项式在 x 处的值。</p>
+            <h3>6. 注意事项</h3>
+            <p>1. 输入框中输入的多项式表达式必须符合上述要求。</p>
+            <p>2. 幂次不能重复。</p>
         </div>
-        <div class="image-container">
-            <h2>输出图像：</h2>
-            <div id="solutionCanvas" style="width: 95%; height: 70%;"></div>
-            <button id="playPauseButton" style="display: none;" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Play</button>
-        </div>
-    </main>
-        <!-- 底部版权信息 -->
-        <footer>
-            <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
-            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-        </footer>
+        
+    </div>
+
+    <!-- 底部版权信息 -->
+    <footer>
+        <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
+        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+    </footer>
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
