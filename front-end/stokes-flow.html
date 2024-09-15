@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -102,7 +101,7 @@
             letter-spacing: 3px;
             display: inline-block;
             width: 50%;
-            height: 800px;
+            height: 900px;
             z-index: 2;
     }
 
@@ -143,7 +142,7 @@
     .image-container {
         text-align: center;
         position: absolute;
-        top: 950px;
+        top: 1050px;
         left: 10%;
         bottom: 10%;
         margin-bottom: 10%;
@@ -159,7 +158,7 @@
         letter-spacing: 3px;
         display: inline-block;
         width: 75vw;
-        height: 1250px;
+        height: 1200px;
         line-height: 10px;
         z-index: 2;
     }
@@ -221,6 +220,50 @@
         background-color: #97c6ce;
     }
 
+    /*帮助板块样式*/
+    .help {
+            text-align: center;
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 2350px;
+            left: 10%;
+            bottom: 20%;
+            margin-bottom: 10%;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 20px;
+            padding:10px 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            letter-spacing: 3px;
+            display: inline-block;
+            width: 75vw;
+            line-height: 20px;
+            height: 650px;
+            overflow: auto; /* 确保内容超出时可以滚动 */
+            z-index: 2;
+        }
+
+        .help h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        .help-content {
+            text-align: left;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
     /* 粒子背景 */
     #particles-js {
         position: fixed;
@@ -242,7 +285,6 @@
         width: 100%;
         bottom: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
-        z-index: 3;
     }
 
     footer p, footer a {
@@ -255,7 +297,7 @@
 
     footer a:hover {
         color: #0ff;
-        z-index: 3;
+        z-index: 2;
     }
         </style>
     </head>
@@ -273,13 +315,9 @@
                 <a href="menu.html">Home</a>
                 <a href="#">About Us</a>
                 <a href="#">Help</a>
-                <a href="#">Contact</a>
             </nav>
         </header>
 
-
-
-        <main>
         <!--输入板块-->
         <div class= "input">
             <h2>Stokes 流求解</h2>
@@ -293,6 +331,7 @@
             <p>$$u(1,y) = v(1,y) = 0 ,y \in (0,1)$$</p>
             <h3 id="input-u">请输入上边界流场流速$$u_1(x)$$</h3>
             <input type="number" id="u1-input" placeholder="输入数值">
+            <p>需要帮助？请移步最下方的“帮助”板块。</p>
             <button id="submit-button" onclick="sendDataToServer()">提交</button>
             <div id="plotw" ></div>
         </div>
@@ -302,7 +341,33 @@
             <h2>Stokes 流问题模拟向量图</h2>
             <div id="plot" style="width: 80%; height: 85%; align-items: center; margin: auto;"></div>
         </div>
-        </main>
+
+        <!--使用手册-->
+
+        <div class="help">
+            <h2>需要帮助？请阅读以下内容</h2>
+
+            <div class="help-content">
+                <h3>1. 输入多项式表达式</h3>
+                <p>在输入框中输入多项式表达式，如：2x^3 + 3x^2 - 5x + 2。</p>
+                <p>支持的运算符有：+</p>
+                <p>支持的变量有：x</p>
+                <p>支持的幂次范围为：0 ≤ x ≤ 1。</p>
+                <p>如：2x^3 + 3x^2 - 5x + 2</p>
+                <h3>2. 增加行</h3>
+                <p>点击“增加行”按钮，可以增加多项式的行。</p>
+                <h3>3. 输入 x 值</h3>
+                <p>输入 x 值 (0 ≤ x ≤ 1)，点击“计算u(x)”按钮，可以计算多项式在 x 处的值。</p>
+                <h3>4. 输出图像</h3>
+                <p>点击“输出图像”按钮，可以绘制多项式在 x 轴上的图像。</p>
+                <h3>5. 发送数据</h3>
+                <p>点击“发送数据”按钮，可以将多项式的系数和幂次发送至服务器，由服务器计算并返回多项式在 x 处的值。</p>
+                <h3>6. 注意事项</h3>
+                <p>1. 输入框中输入的多项式表达式必须符合上述要求。</p>
+                <p>2. 幂次不能重复。</p>
+            </div>
+            
+        </div>
 
         <!-- 底部版权信息 -->
         <footer>
