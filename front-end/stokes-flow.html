@@ -274,6 +274,74 @@
         z-index: 1; /* 粒子背景层次最低 */
     }
 
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #fff;
+        background: #000000;
+        position: relative;
+        scroll-behavior: smooth;
+    }
+
+
+
+    /* 顶部导航栏样式 */
+    header {
+        display: flex;
+        justify-content: space-between;
+        top : 0;
+        position: fixed;
+        align-items: center;
+        width: 100%;
+        padding: 20px 50px 20px 50px;
+        background: rgb(0, 0, 0);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 3;
+    }
+
+    header .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0ff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    header nav {
+        position: absolute;
+        right: 10vw;
+        align-items: center;
+    }
+
+    header nav a {
+        margin-left: 30px;
+        margin-right: 3vw;
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    header nav a:hover {
+        color: #0ff;
+    }
+
+    /* 中心主菜单样式 */
+    main {
+        position: relative;
+        z-index: 2; /* 确保主内容区在粒子背景上方 */
+        margin-top: 100px; /* 确保内容在导航栏下方 */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 10%;
+    }
+
+
+
     /* 底部样式 */
     footer {
         background: rgba(0, 0, 0, 0.5);
@@ -281,9 +349,6 @@
         padding: 20px 0;
         height: 30px;
         text-align: center;
-        position: fixed;
-        width: 100%;
-        bottom: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -297,7 +362,7 @@
 
     footer a:hover {
         color: #0ff;
-        z-index: 2;
+        z-index: 3;
     }
         </style>
     </head>

@@ -156,7 +156,7 @@
         box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         letter-spacing: 3px;
         display: inline-block;
-        width: 27%;
+        width: 35%;
         height: 510px;
         line-height: 30px;
         z-index: 2;
@@ -259,15 +259,81 @@
     }
 
     /* 底部样式 */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #fff;
+        background: #000000;
+        position: relative;
+        scroll-behavior: smooth;
+    }
+
+
+
+    /* 顶部导航栏样式 */
+    header {
+        display: flex;
+        justify-content: space-between;
+        top : 0;
+        position: fixed;
+        align-items: center;
+        width: 100%;
+        padding: 20px 50px 20px 50px;
+        background: rgb(0, 0, 0);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 3;
+    }
+
+    header .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0ff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    header nav {
+        position: absolute;
+        right: 10vw;
+        align-items: center;
+    }
+
+    header nav a {
+        margin-left: 30px;
+        margin-right: 3vw;
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    header nav a:hover {
+        color: #0ff;
+    }
+
+    /* 中心主菜单样式 */
+    main {
+        position: relative;
+        z-index: 2; /* 确保主内容区在粒子背景上方 */
+        margin-top: 100px; /* 确保内容在导航栏下方 */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 10%;
+    }
+
+
+
+    /* 底部样式 */
     footer {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(10px);
         padding: 20px 0;
         height: 30px;
         text-align: center;
-        position: fixed;
-        width: 100%;
-        bottom: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -283,6 +349,7 @@
         color: #0ff;
         z-index: 3;
     }
+
 
 </style>
 
@@ -307,9 +374,9 @@
         <h2>Advection Equation：</h2>
         <p>本算例求解一维对流方程（Advection Equation），其表达式如下：</p>
         <h2> $$\frac{\partial u}{\partial t} + c\cdot \frac{\partial u}{\partial x} = 0 $$</h2>
-        <p>其中u(x,t)为待求解的函数，c为常数， x为空间坐标， t为时间坐标(本例中c = 1)。</p>     
-        
-        <h3>请以csv或txt格式输入散点u(x,0)：</h3>
+        <p>其中u(x,t)为待求解的函数，c为常数， x为空间坐标， t为时间坐标(本例中c = 1)。</p>
+
+        <h3>请以csv或txt格式输入50个散点u(x,0)：</h3>
 
         <form id="input" action="/upload_advection" method="post" enctype="multipart/form-data">
             <input type="file" id="file-input" accept=".csv,.txt" />
@@ -335,12 +402,12 @@
         <div class="help-content">
             <h3>物理意义</h3>
             <p>对流方程（Advection Equation），也称为连续性方程，在流体力学中描述了流体的守恒定律，即质量守恒。它表达了流体在流动过程中，质量既不会被创造也不会被消灭，只会从一个地方移动到另一个地方。
-                在方程表达式中,u(x,t)的物理意义是流体的密度场，c是流体沿着所研究方向的运动速度，即流体的流速，这里认为是一个非零常数。</p>    
-            <h3>后端代码说明</h3>  
+                在方程表达式中,u(x,t)的物理意义是流体的密度场，c是流体沿着所研究方向的运动速度，即流体的流速，这里认为是一个非零常数。</p>
+            <h3>后端代码说明</h3>
             <p> 本算例中固定c=1。用户输入散点值（一维 np.array 数组）作为方程的初值 u(x,0),要求在 (0,1)中等距采样 50 个点值。
                 后端求解函数 advection_solver 返回一个二维的 np.array 数组，其中第一维为空间步，第二维为时间步，大小为 100*100。</p>
         </div>
-        
+
     </div>
 
     <!-- 底部版权信息 -->
@@ -494,7 +561,14 @@ function refreshCanvas() {
 }
 
 
+function parseFileContent(content) {
+    return content.split(/[\s,;]+/).map(parseFloat).filter(n => !isNaN(n));
+}
 
+function validateFloatArray(array, expectedLength) {
+    console.log('请选择合适的文件,当前文件长度：', array.length);
+    return array.length === expectedLength;
+}
   // 上传文件
 async function uploadFileheat() {
     hidePlayPauseButton();
@@ -507,6 +581,15 @@ async function uploadFileheat() {
     }
     if (!file.name.endsWith('.csv') && !file.name.endsWith('.txt')) {
         alert('请选择一个文件');
+        return;
+    }
+
+    const fileContent = await file.text();
+    const numbers = parseFileContent(fileContent);
+
+    if (!validateFloatArray(numbers, 50)) {
+
+        alert('请选择合适的文件：50个散点数字的数字列');
         return;
     }
     const formData = new FormData();
@@ -541,6 +624,14 @@ async function uploadFile3D() {
     }
     if (!file.name.endsWith('.csv') && !file.name.endsWith('.txt')) {
         alert('请选择一个文件');
+        return;
+    }
+    const fileContent = await file.text();
+    const numbers = parseFileContent(fileContent);
+
+    if (!validateFloatArray(numbers, 50)) {
+
+        alert('请选择合适的文件：50个散点数字的数字列');
         return;
     }
     const formData = new FormData();
@@ -579,6 +670,14 @@ async function uploadFilegif(){
     }
     if (!file.name.endsWith('.csv') && !file.name.endsWith('.txt')) {
         alert('请选择一个文件');
+        return;
+    }
+    const fileContent = await file.text();
+    const numbers = parseFileContent(fileContent);
+
+    if (!validateFloatArray(numbers, 50)) {
+
+        alert('请选择合适的文件：50个散点数字的数字列');
         return;
     }
     const formData = new FormData();

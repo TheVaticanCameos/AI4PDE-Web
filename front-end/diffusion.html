@@ -90,7 +90,7 @@
             position: absolute;
             top: 250px;
             left: 10%;
-            right: 10%;
+            right: 13%;
             bottom: 100px;
             color: #0ff;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
@@ -103,9 +103,9 @@
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
             letter-spacing: 3px;
             display: inline-block;
-            width: 35%;
+            width: 38%;
             line-height: 30px;
-            height: 320px;
+            height: 370px;
             overflow: auto; /* 确保内容超出时可以滚动 */
             min-height: 200px; /* 示例最小高度 */
             z-index: 2;
@@ -152,7 +152,7 @@
         box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         letter-spacing: 3px;
         display: inline-block;
-        width: 27%;
+        width: 33%;
         height: 500px;
         line-height: 30px;
         z-index: 2;
@@ -254,15 +254,81 @@
     }
 
     /* 底部样式 */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #fff;
+        background: #000000;
+        position: relative;
+        scroll-behavior: smooth;
+    }
+
+
+
+    /* 顶部导航栏样式 */
+    header {
+        display: flex;
+        justify-content: space-between;
+        top : 0;
+        position: fixed;
+        align-items: center;
+        width: 100%;
+        padding: 20px 50px 20px 50px;
+        background: rgb(0, 0, 0);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 3;
+    }
+
+    header .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0ff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    header nav {
+        position: absolute;
+        right: 10vw;
+        align-items: center;
+    }
+
+    header nav a {
+        margin-left: 30px;
+        margin-right: 3vw;
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    header nav a:hover {
+        color: #0ff;
+    }
+
+    /* 中心主菜单样式 */
+    main {
+        position: relative;
+        z-index: 2; /* 确保主内容区在粒子背景上方 */
+        margin-top: 100px; /* 确保内容在导航栏下方 */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 10%;
+    }
+
+
+
+    /* 底部样式 */
     footer {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(10px);
         padding: 20px 0;
         height: 30px;
         text-align: center;
-        position: fixed;
-        width: 100%;
-        bottom: 0;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -301,7 +367,7 @@
     <div class="output">
         <h2>Diffusion-Reaction：</h2>
         <h2> $$u_t-Du_{xx}+ku^2-v=0$$</h2>
-        <h3>请以csv或txt格式输入v的散点：</h3>
+        <h3>请以csv或txt格式输入v的1000个散点：</h3>
 
         <form id="input" action="/upload_diffusion" method="post" enctype="multipart/form-data">
             <input type="file" id="file-input" accept=".csv,.txt" />
@@ -343,7 +409,7 @@
             <p>1. 输入框中输入的多项式表达式必须符合上述要求。</p>
             <p>2. 幂次不能重复。</p>
         </div>
-        
+
     </div>
 
     <!-- 底部版权信息 -->
@@ -512,6 +578,16 @@ async function uploadFileheat() {
         alert('请选择一个文件');
         return;
     }
+
+    const fileContent = await file.text();
+    const numbers = parseFileContent(fileContent);
+
+    if (!validateFloatArray(numbers, 1000)) {
+
+        alert('请选择合适的文件：1000个散点数字的数字列');
+        return;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
 
@@ -532,6 +608,7 @@ async function uploadFileheat() {
     }
 }
 
+
 async function uploadFile3D() {
     hidePlayPauseButton();
     refreshCanvas();
@@ -546,6 +623,16 @@ async function uploadFile3D() {
         alert('请选择一个文件');
         return;
     }
+
+    const fileContent = await file.text();
+    const numbers = parseFileContent(fileContent);
+
+    if (!validateFloatArray(numbers, 1000)) {
+
+        alert('请选择合适的文件：1000个散点数字的数字列');
+        return;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
 
@@ -564,6 +651,15 @@ async function uploadFile3D() {
     } catch (error) {
         console.error('文件上传失败:', error);
     }
+}
+
+function parseFileContent(content) {
+    return content.split(/[\s,;]+/).map(parseFloat).filter(n => !isNaN(n));
+}
+
+function validateFloatArray(array, expectedLength) {
+    console.log('请选择合适的文件,当前文件长度：', array.length);
+    return array.length === expectedLength;
 }
 async function uploadFilegif(){
     showPlayPauseButton();
@@ -584,6 +680,16 @@ async function uploadFilegif(){
         alert('请选择一个文件');
         return;
     }
+
+    const fileContent = await file.text();
+    const numbers = parseFileContent(fileContent);
+
+    if (!validateFloatArray(numbers, 1000)) {
+
+        alert('请选择合适的文件：1000个散点数字的数字列');
+        return;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
 
