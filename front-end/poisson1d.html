@@ -85,7 +85,7 @@
         .introduction {
             text-align: center;
             align-items: center;
-            display: flex;
+            display: inline-block;
             flex-direction: column;
             position: absolute;
             top: 150px;
@@ -105,7 +105,6 @@
             width: 35%;
             line-height: 30px;
             height: 610px;
-            overflow: auto; /* 确保内容超出时可以滚动 */
             z-index: 2;
         }
 
@@ -164,12 +163,14 @@
 
         .image-container {
             text-align: center;
+            align-items: center;
+            display: inline-block;
+            flex-direction: column;
             position: absolute;
-            top: 200px;
+            top: 150px;
             left: 55%;
             right: 10%;
-            bottom: auto;
-            margin-bottom: 100px;
+            bottom: 10%;
             color: #0ff;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
             text-decoration: none;
@@ -181,10 +182,9 @@
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
             letter-spacing: 3px;
             display: inline-block;
-            width: 35%;
-            height: 500px;
+            width: 34%;
             line-height: 30px;
-            overflow: scroll;
+            height: 610px;
             z-index: 2;
         }
 
@@ -192,7 +192,7 @@
             margin-top: 10px;
             margin-bottom: 10px;
             position: relative;
-            
+
         }
 
         .output {
