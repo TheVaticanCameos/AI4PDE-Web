@@ -6,6 +6,8 @@ basic-info/
 env/
 *.png
 __pycache__/
+.venv/
+.conda/
 .idea/
 !stokes.png
 !demo.png

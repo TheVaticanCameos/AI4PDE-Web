@@ -12,7 +12,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
-    <link rel="icon" href="logo.ico" type="image/x-icon">
+    <link rel="icon" href="/logo" type="image/x-icon">
 
     <style>
         /* 通用样式 */
@@ -296,7 +296,7 @@
     <header>
         <div class="logo">PDE Solver</div>
         <nav>
-            <a href="menu.html">Home</a>
+            <a href="/">Home</a>
             <a href="#">About Us</a>
             <a href="#">Help</a>
         </nav>
@@ -311,7 +311,7 @@
         
         <h3>请以csv或txt格式输入散点u(x,0)：</h3>
 
-        <form id="input" action="/upload" method="post" enctype="multipart/form-data">
+        <form id="input" action="/upload_advection" method="post" enctype="multipart/form-data">
             <input type="file" id="file-input" accept=".csv,.txt" />
             <br>
             <button id="heat" type="button" onclick="uploadFileheat()">绘制热力图</button>
@@ -513,7 +513,7 @@ async function uploadFileheat() {
     formData.append('file', file);
 
     try {
-        const response = await fetch('/upload', {
+        const response = await fetch('/upload_advection', {
             method: 'POST',
             body: formData
         });
@@ -547,7 +547,7 @@ async function uploadFile3D() {
     formData.append('file', file);
 
     try {
-        const response = await fetch('/upload', {
+        const response = await fetch('/upload_advection', {
             method: 'POST',
             body: formData
         });
@@ -585,7 +585,7 @@ async function uploadFilegif(){
     formData.append('file', file);
 
     try {
-        const response = await fetch('/upload', {
+        const response = await fetch('/upload_advection', {
             method: 'POST',
             body: formData
         });
