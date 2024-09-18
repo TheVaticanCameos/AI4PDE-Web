@@ -163,6 +163,11 @@ def advection_page() -> Response:
     advection_html_path: str = os.path.join(root_dir, 'front-end', 'advection.html')
     return send_file(advection_html_path, mimetype='text/html')
 
+@app.route('/about')
+def advection_page() -> Response:
+    advection_html_path: str = os.path.join(root_dir, 'front-end', 'about.html')
+    return send_file(advection_html_path, mimetype='text/html')
+
 @app.route('/logo')
 def display_logo() -> Response:
     logo_ico_path: str = os.path.join(root_dir, 'front-end', 'logo.ico')
