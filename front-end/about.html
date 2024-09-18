@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="icon" href="logo.ico">
+
+    <style>
+    /* 通用样式 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    background: #000000;
+    position: relative;
+    scroll-behavior: smooth;
+    user-select: text;
+}
+
+/* 漂浮动画 */
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* 顶部导航栏样式 */
+header {
+    display: flex;
+    justify-content: space-between;
+    top : 0;
+    position: fixed;
+    align-items: center;
+    width: 100%;
+    padding: 20px 50px 20px 50px;
+    background: rgb(0, 0, 0);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 3;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+header nav {
+    position: absolute;
+    right: 10vw;
+    align-items: center;
+}
+
+header nav a {   
+    margin-left: 30px;
+    margin-right: 3vw;
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+header nav a:hover {
+    color: #0ff;
+}
+
+/* 介绍板块样式 */
+.introduction {
+    text-align: center;
+    margin-top: 300px;
+    margin-left: 35%;
+    margin-bottom: 30px; 
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+    font-size: 20px;
+    padding:30px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    letter-spacing: 3px;
+    display: inline-block;
+    line-height: 20px;
+    animation: float 3s ease-in-out infinite; 
+    z-index: 3;
+}
+
+.introduction h2 {
+    font-size: 30px;
+    margin-bottom: 40px;
+    color: #0ff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+
+.introduction ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.introduction ul li {
+    font-size: 18px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.introduction ul li:hover {
+    user-select: text;
+}
+
+.introduction ul li::before {
+    content: "•";
+    color: #0ff;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+
+
+/* 粒子背景 */
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* 粒子背景层次最低 */
+}
+
+/* 底部样式 */
+.footer {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    padding: 20px 0;
+    height: 30px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 3;
+}
+
+.footer p, .footer a {
+    color: #ccc;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer a:hover {
+    color: #0ff;
+}
+
+    </style>
+
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+
+        <!-- 顶部导航栏 -->
+        <header>
+            <div class="logo">PDE Solver</div>
+            <nav>
+                <a href="menu.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="#">Help</a>
+            </nav>
+        </header>
+
+
+    <!-- 介绍板块 -->
+    <section class="introduction">
+        <h2>联系我们</h2>
+        <ul>
+            <li>young_xz AT mail DOT ustc DOT edu DOT cn            </li>
+            <li>tinatan AT mail DOT ustc DOT edu DOT cn</li>
+            <li>li-ying AT mail DOT ustc DOT edu DOT cn</li>
+            <li>iw17 AT mail DOT ustc DOT edu DOT cn </li>
+        </ul>
+    </section>
+
+
+        <!-- 底部版权信息 -->
+        <div class="footer">
+            <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
+            <a href="https://github.com/lululxvi/deepxde/tree/master">deepxde</a> | <a href="https://arxiv.org/abs/1910.03193">Copyright</a>
+        </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+    particles: {
+      number: {
+        value: 80,
+        density: {
+          enable: true,
+          value_area: 800
+        }
+      },
+      color: {
+        value: '#0ff'
+      },
+      shape: {
+        type: 'circle',
+        stroke: {
+          width: 0,
+          color: '#000000'
+        }
+      },
+      opacity: {
+        value: 0.5,
+        random: true,
+        anim: {
+          enable: false,
+          speed: 1,
+          opacity_min: 0.1,
+          sync: false
+        }
+      },
+      size: {
+        value: 3,
+        random: true,
+        anim: {
+          enable: false,
+          speed: 40,
+          size_min: 0.1,
+          sync: false
+        }
+      },
+      line_linked: {
+        enable: true,
+        distance: 150,
+        color: '#0ff',
+        opacity: 0.4,
+        width: 1
+      },
+      move: {
+        enable: true,
+        speed: 6,
+        direction: 'none',
+        random: false,
+        straight: false,
+        out_mode: 'out',
+        bounce: false,
+        attract: {
+          enable: false,
+          rotateX: 600,
+          rotateY: 1200
+        }
+      }
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: {
+        onhover: {
+          enable: true,
+          mode: 'repulse'
+        },
+        onclick: {
+          enable: true,
+          mode: 'push'
+        },
+        resize: true
+      },
+      modes: {
+        grab: {
+          distance: 400,
+          line_linked: {
+            opacity: 1
+          }
+        },
+        bubble: {
+          distance: 400,
+          size: 40,
+          duration: 2,
+          opacity: 8,
+          speed: 3
+        },
+        repulse: {
+          distance: 200,
+          duration: 0.4
+        },
+        push: {
+          particles_nb: 4
+        },
+        remove: {
+          particles_nb: 2
+        }
+      }
+    },
+    retina_detect: true,
+    z_index: 1
+  });
+  
+    </script>
+</body>
+</html>
