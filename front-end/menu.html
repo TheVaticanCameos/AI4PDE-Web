@@ -202,16 +202,20 @@ main h1 {
 }
 
 /* 底部样式 */
-footer {
+.footer {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
+    width: 100%;
+    position: fixed;
+    bottom: 0;
     padding: 20px 0;
     height: 30px;
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 3;
 }
 
-footer p, footer a {
+.footer p, .footer a {
     color: #ccc;
     margin: 0;
     padding: 0;
@@ -219,9 +223,8 @@ footer p, footer a {
     font-size: 14px;
 }
 
-footer a:hover {
+.footer a:hover {
     color: #0ff;
-    z-index: 3;
 }
 
     </style>
@@ -236,7 +239,7 @@ footer a:hover {
             <div class="logo">PDE Solver</div>
             <nav>
                 <a href="/">Home</a>
-                <a href="#">About Us</a>
+                <a href="/about" class="menu-item">About Us</a>
                 <a href="#">Help</a>
             </nav>
         </header>
@@ -266,10 +269,10 @@ footer a:hover {
         </main>
 
         <!-- 底部版权信息 -->
-        <footer>
+        <div class="footer">
             <p>&copy; 2024 PDE Solver. All Rights Reserved.</p>
-            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-        </footer>
+            <a href="https://github.com/lululxvi/deepxde/tree/master">deepxde</a> | <a href="https://arxiv.org/abs/1910.03193">Copyright</a>
+        </div>
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
