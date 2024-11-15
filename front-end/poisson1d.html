@@ -303,7 +303,7 @@
             display: inline-block;
             width: 80%;
             line-height: 30px;
-            height: 1270px;
+            height: 1100px;
             z-index: 2;
         }
 
@@ -340,7 +340,7 @@
             display: flex;
             flex-direction: column;
             position: absolute;
-            top: 2200px;
+            top: 2030px;
             left: 0%;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
             text-decoration: none;
@@ -473,9 +473,6 @@
                 <p>2. 热传导 在热传导问题中，Poisson方程描述了温度分布u(x)如何随时间和位置变化。如果存在热源或热汇，那么温度的拉普拉斯算子与热源密度成正比。</p>
                 <p>3. 流体力学 在流体力学中，Poisson方程可以用来描述流体中的压力分布。</p>
                 <p>4. 量子力学 在量子力学中，Poisson方程与薛定谔方程结合，可以描述粒子在势场中的波函数。</p>
-                <h3>后端代码说明</h3>  
-                <p> 本算例中固定c=1。用户输入散点值（一维 np.array 数组）作为方程的初值 u(x,0),要求在 (0,1)中等距采样 50 个点值。
-                    后端求解函数 advection_solver 返回一个二维的 np.array 数组，其中第一维为空间步，第二维为时间步，大小为 100*100。</p>
             </div>
             
         </div>
