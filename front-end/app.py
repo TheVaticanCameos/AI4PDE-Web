@@ -164,9 +164,9 @@ def advection_page() -> Response:
     return send_file(advection_html_path, mimetype='text/html')
 
 @app.route('/about')
-def advection_page() -> Response:
-    advection_html_path: str = os.path.join(root_dir, 'front-end', 'about.html')
-    return send_file(advection_html_path, mimetype='text/html')
+def about_page() -> Response:
+    about_html_path: str = os.path.join(root_dir, 'front-end', 'about.html')
+    return send_file(about_html_path, mimetype='text/html')
 
 @app.route('/logo')
 def display_logo() -> Response:
@@ -174,7 +174,7 @@ def display_logo() -> Response:
     return send_file(logo_ico_path, mimetype='image/x-icon')
 
 def main() -> None:
-    app.run(debug=True)
+    app.run(debug=True) # change to False on deployment
 
 if __name__ == '__main__':
     main()
