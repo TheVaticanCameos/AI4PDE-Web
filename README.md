@@ -13,11 +13,37 @@ GitHub网页：https://github.com/TheVaticanCameos/AI4PDE-Web
 基本使用方法：用户在 Web 端选择需要求解的方程，输入相关参数，后端代码将执行求解过程，将求解结果反馈在 Web 端。
 
 目前可求解的方程有：
-- 带 Dirichlet 两点边值的一维 Poisson 方程 $$ \begin{aligned}
+- 带 Dirichlet 两点边值的一维 Poisson 方程 
+    $$ 
+    \begin{aligned}
     & u''(x)=f(x), \quad x\in\left[0, 1\right]\\
     & u(0)=u(1)=0
-\end{aligned} $$ 其中右端项（源项） $f(x)$ 是多项式，由用户通过指定各项系数的方式输入； $u(x)$ 是待求解的函数。
-- ......
+    \end{aligned} 
+    $$ 
+    其中右端项（源项） $f(x)$ 是多项式，由用户通过指定各项系数的方式输入； $u(x)$ 是待求解的函数。
+- 反应扩散方程 
+  $$
+  u_t-D u_{xx}+ku^2-v=0
+  $$
+  其中 $u=u(t, x)$ ， $k, D$ 为常数， $v=v(x)$ 是只依赖于空间的函数。求解区域为 $x\in[0, 1], t\in[0, 1]$ 。
+- Stokes 流问题
+  $$
+    \begin{aligned}
+    \mu\left(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}\right)-\frac{\partial p}{\partial x}&=0, x\in(0, 1), y\in(0, 1)\\
+    \mu\left(\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2}\right)-\frac{\partial p}{\partial y}&=0, x\in(0, 1), y\in(0, 1)\\
+    \frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}&=0, x\in(0, 1), y \in (0, 1)\\
+    u(x, 1)=u_1(x), v(x, 1)&=0, x\in(0, 1)\\
+    u(x, 0)=v(x, 0)=p(x, 0)&=0, x\in(0, 1)\\
+    u(0, y)=v(0, y)&=0, y\in(0, 1)\\
+    u(1, y)=v(1, y)&=0, y\in(0, 1)
+    \end{aligned}
+  $$
+  这是一个稳态方程，描述的是稳定状态下的各个物理量，因此和时间无关。其中 $u(x, y), v(x, y)$ 为流场中的速度的 $x, y$ 分量， $p(x, y)$ 为压力场。
+- 对流方程
+  $$
+    \frac{\partial u}{\partial t} + c\cdot\frac{\partial u}{\partial x}=0
+  $$
+  其中 $u(x,t)$ 为待求解的函数， $c$ 为常数， $x$ 为空间坐标， $t$ 为时间坐标。
 
 ### 技术原理
 
@@ -32,24 +58,44 @@ GitHub网页：https://github.com/TheVaticanCameos/AI4PDE-Web
 本项目的组织结构如下：
 ```
 root/
-|--.idea/                       // 配置文件（无需修改）
-|--back-end/                    // 后端文件（代码，模型参数，后端输出）
-|   |--requirements.txt         // 后端代码环境依赖
-|   |--output/                  // 后端代码的输出，用于反馈给用户
-|       |--xxx.png              // 解的图像
-|       |--...
-|   |--params/                  // 预训练好的模型参数
-|       |--params.ckpt-1000.pt  // 用于一维 Poisson 方程的模型参数
-|       |--...
-|   |--source/                  // 用于求解的 python 代码
-|       |--infer.py             // 使用模型参数，用于一维 Poisson 方程的求解
-|       |--train.py             // 训练模型参数
-|       |--...
-|--front-end/                   // 前端文件
-|   |--pde-solver.html          // Web 前端
-|   |--PDE-solver2.0.html       // ver2.0 Web 前端
-|   |--server.py                // 连接到服务器
-|   |--...
+|--.idea/                                       // 配置文件（无需修改）
+|--back-end/                                    // 后端文件（代码，模型参数，后端输出）
+|   |--README.md                                // 后端代码说明文档总述
+|   |--params/                                  // 预训练好的模型参数
+|       |--advection-params.ckpt-50000.pt       // 用于对流方程的模型参数
+|       |--dr-params.ckpt-20000.pt              // 用于反应扩散方程的模型参数
+|       |--poisson1d-params.ckpt-1000.pt        // 用于一维 Poisson 方程的模型参数
+|       |--stokes-params-50000.pt               // 用于 Stokes 流的模型参数
+|   |--source/                                  // 用于求解的 python 代码
+|       |--advection/                           // 对流方程
+|           |--infer_advection.py               // 用于对流方程的推理
+|           |--train_advection.py               // 用于对流方程的训练
+|           |--README.md                        // 对流方程说明文档
+|       |--diffusion-reaction/                  // 反应扩散方程
+|           |--infer_diffusion_reaction.py        // 用于反应扩散方程的推理
+|           |--train_diffusion_reaction.py        // 用于反应扩散方程的训练
+|           |--README.md                        // 反应扩散方程说明文档
+|       |--poisson1d/                           // 一维 Poisson 方程
+|           |--infer_poisson1d.py                // 用于一维 Poisson 方程的推理
+|           |--train_poisson1d.py                // 用于一维 Poisson 方程的训练
+|           |--README.md                        // 一维 Poisson 方程说明文档
+|       |--stokes-flow/                         // Stokes 流
+|           |--infer_stokes.py                   // 用于 Stokes 流的推理
+|           |--train_stokes.py                   // 用于 Stokes 流的训练
+|           |--README.md                        // Stokes 流说明文档
+|       |--utils/                               // 辅助函数
+|--front-end/                                   // 前端文件
+|   |--docs/                                    // 前端文档
+|   |--uploads/                                 // 用户上传数据示例
+|   |--about.html                               // 关于页面
+|   |--advection.html                           // 对流方程页面
+|   |--diffusion.html                           // 反应扩散方程页面
+|   |--poisson1d.html                           // 一维 Poisson 方程页面
+|   |--stokes-flow.html                         // Stokes 流页面
+|   |--menu.html                                // 主页
+|   |--logo.ico                                 // 图标
+|   |--app.py                                   // 主程序
+|--requirements.txt                             // 代码环境依赖
 ```
 
 ### 后端代码运行方法
